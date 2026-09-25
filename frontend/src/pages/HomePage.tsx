@@ -29,8 +29,8 @@ export function HomePage() {
             </p>
           </div>
           <div className={styles.heroActions}>
-            <Link to="/contacto" className="btn btn--primary">
-              Cotizar mi evento
+            <Link to="/cotizador" className="btn btn--primary">
+              Arma tu presupuesto
             </Link>
             <Link to="/servicios" className="btn btn--ghost">
               Ver servicios

@@ -17,6 +17,10 @@ public static class DependencyInjection
         // is what lets every repository map `display_order` -> `DisplayOrder` for free.
         Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
 
+        // Dapper has no built-in DbType for DateOnly (used by Lead.EventDate) and throws
+        // NotSupportedException without this — see DateOnlyTypeHandler's remarks.
+        Dapper.SqlMapper.AddTypeHandler(new DateOnlyTypeHandler());
+
         services.Configure<DatabaseOptions>(configuration.GetSection(DatabaseOptions.SectionName));
         services.Configure<QrOptions>(configuration.GetSection(QrOptions.SectionName));
 

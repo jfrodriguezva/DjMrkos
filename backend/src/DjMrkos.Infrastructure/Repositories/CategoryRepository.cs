@@ -38,8 +38,8 @@ public sealed class CategoryRepository(IResilientDbExecutor db) : ICategoryRepos
         await db.ExecuteAsync((connection, token) =>
         {
             const string sql = """
-                INSERT INTO categories (id, module_id, name, slug, description, image_url, display_order, is_active, created_at_utc)
-                VALUES (@Id, @ModuleId, @Name, @Slug, @Description, @ImageUrl, @DisplayOrder, @IsActive, @CreatedAtUtc)
+                INSERT INTO categories (id, module_id, name, slug, description, image_url, price, display_order, is_active, created_at_utc)
+                VALUES (@Id, @ModuleId, @Name, @Slug, @Description, @ImageUrl, @Price, @DisplayOrder, @IsActive, @CreatedAtUtc)
                 """;
             return connection.ExecuteAsync(new CommandDefinition(sql, CategoryRow.FromEntity(category), cancellationToken: token));
         }, ct);
@@ -53,7 +53,7 @@ public sealed class CategoryRepository(IResilientDbExecutor db) : ICategoryRepos
             const string sql = """
                 UPDATE categories
                 SET name = @Name, slug = @Slug, description = @Description, image_url = @ImageUrl,
-                    display_order = @DisplayOrder, is_active = @IsActive
+                    price = @Price, display_order = @DisplayOrder, is_active = @IsActive
                 WHERE id = @Id
                 """;
             return connection.ExecuteAsync(new CommandDefinition(sql, CategoryRow.FromEntity(category), cancellationToken: token));
@@ -66,13 +66,34 @@ public sealed class CategoryRepository(IResilientDbExecutor db) : ICategoryRepos
             return connection.ExecuteAsync(new CommandDefinition(sql, new { Id = id }, cancellationToken: token));
         }, ct);
 
-    private sealed record CategoryRow(
-        Guid Id, Guid ModuleId, string Name, string Slug, string? Description,
-        string? ImageUrl, int DisplayOrder, bool IsActive, DateTimeOffset CreatedAtUtc)
+    /// <summary>See the remark on <c>ModuleRepository.ModuleRow</c> — init-only properties, no primary constructor.</summary>
+    private sealed record CategoryRow
     {
-        public Category ToEntity() => Category.Rehydrate(Id, ModuleId, Name, Slug, Description, ImageUrl, DisplayOrder, IsActive, CreatedAtUtc);
+        public Guid Id { get; init; }
+        public Guid ModuleId { get; init; }
+        public string Name { get; init; } = string.Empty;
+        public string Slug { get; init; } = string.Empty;
+        public string? Description { get; init; }
+        public string? ImageUrl { get; init; }
+        public decimal? Price { get; init; }
+        public int DisplayOrder { get; init; }
+        public bool IsActive { get; init; }
+        public DateTimeOffset CreatedAtUtc { get; init; }
 
-        public static CategoryRow FromEntity(Category c) => new(
-            c.Id, c.ModuleId, c.Name, c.Slug, c.Description, c.ImageUrl, c.DisplayOrder, c.IsActive, c.CreatedAtUtc);
+        public Category ToEntity() => Category.Rehydrate(Id, ModuleId, Name, Slug, Description, ImageUrl, Price, DisplayOrder, IsActive, CreatedAtUtc);
+
+        public static CategoryRow FromEntity(Category c) => new()
+        {
+            Id = c.Id,
+            ModuleId = c.ModuleId,
+            Name = c.Name,
+            Slug = c.Slug,
+            Description = c.Description,
+            ImageUrl = c.ImageUrl,
+            Price = c.Price,
+            DisplayOrder = c.DisplayOrder,
+            IsActive = c.IsActive,
+            CreatedAtUtc = c.CreatedAtUtc,
+        };
     }
 }

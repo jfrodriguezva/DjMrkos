@@ -29,10 +29,30 @@ public sealed class LeadRepository(IResilientDbExecutor db) : ILeadRepository
         return lead;
     }
 
-    private sealed record LeadRow(Guid Id, string Name, string Email, string? Phone, DateOnly? EventDate, string Message, int Status, DateTimeOffset CreatedAtUtc)
+    /// <summary>See the remark on <c>ModuleRepository.ModuleRow</c> — init-only properties, no primary constructor.</summary>
+    private sealed record LeadRow
     {
+        public Guid Id { get; init; }
+        public string Name { get; init; } = string.Empty;
+        public string Email { get; init; } = string.Empty;
+        public string? Phone { get; init; }
+        public DateOnly? EventDate { get; init; }
+        public string Message { get; init; } = string.Empty;
+        public int Status { get; init; }
+        public DateTimeOffset CreatedAtUtc { get; init; }
+
         public Lead ToEntity() => Lead.Rehydrate(Id, Name, Email, Phone, EventDate, Message, (LeadStatus)Status, CreatedAtUtc);
 
-        public static LeadRow FromEntity(Lead l) => new(l.Id, l.Name, l.Email, l.Phone, l.EventDate, l.Message, (int)l.Status, l.CreatedAtUtc);
+        public static LeadRow FromEntity(Lead l) => new()
+        {
+            Id = l.Id,
+            Name = l.Name,
+            Email = l.Email,
+            Phone = l.Phone,
+            EventDate = l.EventDate,
+            Message = l.Message,
+            Status = (int)l.Status,
+            CreatedAtUtc = l.CreatedAtUtc,
+        };
     }
 }

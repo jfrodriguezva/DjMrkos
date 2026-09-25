@@ -1,17 +1,19 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getAdminApiKey, setAdminApiKey } from '../../lib/apiClient'
+import { CatalogPanel } from './panels/CatalogPanel'
 import { EventsPanel } from './panels/EventsPanel'
 import { LeadsPanel } from './panels/LeadsPanel'
 import { LiveQueuePanel } from './panels/LiveQueuePanel'
 import { TestimonialsPanel } from './panels/TestimonialsPanel'
 import styles from './AdminDashboardPage.module.css'
 
-type Tab = 'queue' | 'events' | 'testimonials' | 'leads'
+type Tab = 'queue' | 'events' | 'catalog' | 'testimonials' | 'leads'
 
 const TABS: { id: Tab; label: string }[] = [
   { id: 'queue', label: 'Cola en vivo' },
   { id: 'events', label: 'Eventos' },
+  { id: 'catalog', label: 'Catálogo' },
   { id: 'testimonials', label: 'Testimonios' },
   { id: 'leads', label: 'Cotizaciones' },
 ]
@@ -57,6 +59,7 @@ export function AdminDashboardPage() {
         <div className={styles.content}>
           {tab === 'queue' && <LiveQueuePanel />}
           {tab === 'events' && <EventsPanel />}
+          {tab === 'catalog' && <CatalogPanel />}
           {tab === 'testimonials' && <TestimonialsPanel />}
           {tab === 'leads' && <LeadsPanel />}
         </div>

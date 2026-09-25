@@ -6,6 +6,7 @@ export interface MenuCategory {
   slug: string
   description: string | null
   imageUrl: string | null
+  price: number | null
 }
 
 export interface MenuModule {
@@ -33,6 +34,7 @@ export interface CategoryAdmin {
   slug: string
   description: string | null
   imageUrl: string | null
+  price: number | null
   displayOrder: number
   isActive: boolean
   createdAtUtc: string

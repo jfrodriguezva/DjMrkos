@@ -53,13 +53,16 @@ export function Header() {
           <NavLink to="/testimonios" className={link}>
             Testimonios
           </NavLink>
+          <NavLink to="/cotizador" className={link}>
+            Cotizador
+          </NavLink>
           <NavLink to="/contacto" className={link}>
             Contacto
           </NavLink>
         </nav>
 
         <div className={styles.actions}>
-          <Button size="sm" onClick={() => navigate('/contacto')}>
+          <Button size="sm" onClick={() => navigate('/cotizador')}>
             Cotizar
           </Button>
           <button
@@ -86,6 +89,9 @@ export function Header() {
           </NavLink>
           <NavLink to="/testimonios" className={styles.mobileLink} onClick={() => setMobileOpen(false)}>
             Testimonios
+          </NavLink>
+          <NavLink to="/cotizador" className={styles.mobileLink} onClick={() => setMobileOpen(false)}>
+            Cotizador
           </NavLink>
           <NavLink to="/contacto" className={styles.mobileLink} onClick={() => setMobileOpen(false)}>
             Contacto

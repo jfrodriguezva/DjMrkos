@@ -29,7 +29,7 @@ public sealed class GetPublicMenuQueryHandler(IModuleRepository modules, ICatego
                 m.Icon,
                 categoriesByModule[m.Id]
                     .OrderBy(c => c.DisplayOrder)
-                    .Select(c => new MenuCategoryDto(c.Id, c.Name, c.Slug, c.Description, c.ImageUrl))
+                    .Select(c => new MenuCategoryDto(c.Id, c.Name, c.Slug, c.Description, c.ImageUrl, c.Price))
                     .ToList()))
             .ToList();
     }

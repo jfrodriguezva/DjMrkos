@@ -55,14 +55,33 @@ public sealed class SongRequestRepository(IResilientDbExecutor db) : ISongReques
             return connection.ExecuteAsync(new CommandDefinition(sql, SongRequestRow.FromEntity(songRequest), cancellationToken: token));
         }, ct);
 
-    private sealed record SongRequestRow(
-        Guid Id, Guid EventId, string SongTitle, string? Artist, string? RequesterName,
-        string? Dedication, string RequesterFingerprint, int Status, DateTimeOffset CreatedAtUtc)
+    /// <summary>See the remark on <c>ModuleRepository.ModuleRow</c> — init-only properties, no primary constructor.</summary>
+    private sealed record SongRequestRow
     {
+        public Guid Id { get; init; }
+        public Guid EventId { get; init; }
+        public string SongTitle { get; init; } = string.Empty;
+        public string? Artist { get; init; }
+        public string? RequesterName { get; init; }
+        public string? Dedication { get; init; }
+        public string RequesterFingerprint { get; init; } = string.Empty;
+        public int Status { get; init; }
+        public DateTimeOffset CreatedAtUtc { get; init; }
+
         public SongRequest ToEntity() => SongRequest.Rehydrate(
             Id, EventId, SongTitle, Artist, RequesterName, Dedication, RequesterFingerprint, (SongRequestStatus)Status, CreatedAtUtc);
 
-        public static SongRequestRow FromEntity(SongRequest s) => new(
-            s.Id, s.EventId, s.SongTitle, s.Artist, s.RequesterName, s.Dedication, s.RequesterFingerprint, (int)s.Status, s.CreatedAtUtc);
+        public static SongRequestRow FromEntity(SongRequest s) => new()
+        {
+            Id = s.Id,
+            EventId = s.EventId,
+            SongTitle = s.SongTitle,
+            Artist = s.Artist,
+            RequesterName = s.RequesterName,
+            Dedication = s.Dedication,
+            RequesterFingerprint = s.RequesterFingerprint,
+            Status = (int)s.Status,
+            CreatedAtUtc = s.CreatedAtUtc,
+        };
     }
 }

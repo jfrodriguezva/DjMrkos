@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Link, useParams } from 'react-router-dom'
 import { EmptyState, LoadingState } from '../components/ui/PageState'
 import { api } from '../lib/apiClient'
+import { formatMxn } from '../lib/currency'
 import type { MenuModule } from '../types/api'
 import styles from './ServiceDetailPage.module.css'
 
@@ -41,14 +42,23 @@ export function ServiceDetailPage() {
         {module_.categories.length === 0 ? (
           <EmptyState title="Aún no hay categorías publicadas" description="Este módulo está preparándose." />
         ) : (
-          <div className={styles.grid}>
-            {module_.categories.map((c) => (
-              <div key={c.id} className={`card ${styles.categoryCard}`}>
-                <h3>{c.name}</h3>
-                {c.description && <p>{c.description}</p>}
-              </div>
-            ))}
-          </div>
+          <>
+            <div className={styles.grid}>
+              {module_.categories.map((c) => (
+                <div key={c.id} className={`card ${styles.categoryCard}`}>
+                  <h3>{c.name}</h3>
+                  {c.description && <p>{c.description}</p>}
+                  <div className={styles.categoryPrice}>{c.price !== null ? `Desde ${formatMxn(c.price)}` : 'Incluido / a cotizar'}</div>
+                </div>
+              ))}
+            </div>
+            <div className={styles.ctaRow}>
+              <p>¿Ya sabes qué quieres? Arma tu presupuesto arrastrando los servicios que te interesan.</p>
+              <Link to="/cotizador" className="btn btn--primary">
+                Ir al cotizador
+              </Link>
+            </div>
+          </>
         )}
       </div>
     </>

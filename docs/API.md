@@ -15,9 +15,11 @@ Los endpoints bajo `/api/admin/*` requieren el header `X-Api-Key: <clave>` (ver 
 | PUT | `/api/admin/modules/{id}` | Actualiza nombre, ícono, orden y estado activo. |
 | DELETE | `/api/admin/modules/{id}` | Desactiva el módulo (soft delete — ver [DATABASE.md](DATABASE.md)). |
 | POST | `/api/admin/modules/reorder` | Aplica un nuevo orden completo (`{ orderedModuleIds: string[] }`). |
-| POST | `/api/admin/categories` | Crea una categoría bajo un módulo. |
-| PUT | `/api/admin/categories/{id}` | Actualiza una categoría. |
+| POST | `/api/admin/categories` | Crea una categoría bajo un módulo. Body incluye `price` (decimal, opcional — `null` = incluido/a cotizar). |
+| PUT | `/api/admin/categories/{id}` | Actualiza una categoría, incluido `price`. |
 | DELETE | `/api/admin/categories/{id}` | Desactiva la categoría. |
+
+`price` viaja también en `GET /api/menu` (dentro de cada categoría) — es lo que alimenta el cotizador tipo carrito del frontend sin un endpoint aparte. Ver [FRONTEND.md](FRONTEND.md#cotizador-tipo-carrito).
 
 ## Eventos y QR
 

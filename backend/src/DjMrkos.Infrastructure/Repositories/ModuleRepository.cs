@@ -57,11 +57,34 @@ public sealed class ModuleRepository(IResilientDbExecutor db) : IModuleRepositor
             return connection.ExecuteAsync(new CommandDefinition(sql, new { Id = id }, cancellationToken: token));
         }, ct);
 
-    /// <summary>Row shape exactly mirrors the `modules` table; keeps Dapper's mapping dumb and the entity's constructor private.</summary>
-    private sealed record ModuleRow(Guid Id, string Name, string Slug, string? Icon, int DisplayOrder, bool IsActive, DateTimeOffset CreatedAtUtc)
+    /// <summary>
+    /// Row shape mirrors the `modules` table. Deliberately a record with only init-only
+    /// properties (no primary constructor) — Dapper only honors
+    /// <c>DefaultTypeMap.MatchNamesWithUnderscores</c> for property-setter mapping; a
+    /// positional record forces Dapper into constructor matching, which expects a parameter
+    /// named literally <c>display_order</c> and throws.
+    /// </summary>
+    private sealed record ModuleRow
     {
+        public Guid Id { get; init; }
+        public string Name { get; init; } = string.Empty;
+        public string Slug { get; init; } = string.Empty;
+        public string? Icon { get; init; }
+        public int DisplayOrder { get; init; }
+        public bool IsActive { get; init; }
+        public DateTimeOffset CreatedAtUtc { get; init; }
+
         public Module ToEntity() => Module.Rehydrate(Id, Name, Slug, Icon, DisplayOrder, IsActive, CreatedAtUtc);
 
-        public static ModuleRow FromEntity(Module m) => new(m.Id, m.Name, m.Slug, m.Icon, m.DisplayOrder, m.IsActive, m.CreatedAtUtc);
+        public static ModuleRow FromEntity(Module m) => new()
+        {
+            Id = m.Id,
+            Name = m.Name,
+            Slug = m.Slug,
+            Icon = m.Icon,
+            DisplayOrder = m.DisplayOrder,
+            IsActive = m.IsActive,
+            CreatedAtUtc = m.CreatedAtUtc,
+        };
     }
 }

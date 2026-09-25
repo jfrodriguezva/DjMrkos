@@ -19,11 +19,12 @@ frontend/src/
 │   └── ui/                 # Button, Badge, Equalizer, PageState (loading/error/empty)
 └── pages/
     ├── HomePage, ServicesPage, ServiceDetailPage, AboutPage, TestimonialsPage, ContactPage
+    ├── QuoteBuilderPage      # /cotizador — el presupuesto tipo carrito, drag & drop
     ├── SongRequestPage      # /evento/:token — la página que abre el QR, fuera del layout del sitio
     └── admin/
         ├── AdminLoginPage
         ├── AdminDashboardPage  # shell con pestañas
-        └── panels/              # EventsPanel, LiveQueuePanel, TestimonialsPanel, LeadsPanel
+        └── panels/              # EventsPanel, LiveQueuePanel, CatalogPanel, TestimonialsPanel, LeadsPanel
 ```
 
 ## Sistema de diseño
@@ -35,6 +36,14 @@ El motivo visual recurrente es el ecualizador (`components/ui/Equalizer.tsx`) �
 ## El menú es de verdad configurable
 
 `Header.tsx` no tiene una lista de servicios hardcodeada — hace `useQuery(['menu'], () => api.get('/menu'))` y renderiza lo que reciba. Agregar un módulo desde el panel admin lo hace aparecer en el header público en la siguiente carga, sin tocar una línea de este proyecto.
+
+## Cotizador tipo carrito
+
+`QuoteBuilderPage.tsx` (`/cotizador`) reutiliza `GET /api/menu` como catálogo — cada categoría con `price` es un artículo que se puede arrastrar (API nativa de HTML5 Drag and Drop: `draggable`, `onDragStart`/`onDrop`) a la zona de presupuesto, o agregar con el botón **+** de la tarjeta. Las dos vías existen a propósito: el drag-and-drop es la interacción vistosa en escritorio, pero el HTML5 DnD nativo no es confiable en touch, así que el botón **+** es el camino que de verdad funciona en el celular de la mayoría de los visitantes.
+
+El campo **invitados esperados** no filtra ni oculta artículos — alimenta una recomendación textual (`lib/currency.ts#audienceTierFor`, una tabla de umbrales fija) sobre cuánto audio e iluminación conviene para ese tamaño de evento. Es una guía, no una automatización: el usuario sigue eligiendo todo a mano.
+
+No existe un backend de "presupuestos" — al enviar, el carrito compone un resumen de texto (artículos, cantidades, total, invitados) y lo manda como `message` de un `Lead` normal (`POST /api/leads`). El panel admin ve la cotización completa en la pestaña **Cotizaciones**, sin una tabla ni endpoint nuevos.
 
 ## Tiempo real
 

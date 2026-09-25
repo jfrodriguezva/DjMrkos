@@ -52,10 +52,28 @@ public sealed class TestimonialRepository(IResilientDbExecutor db) : ITestimonia
             return connection.ExecuteAsync(new CommandDefinition(sql, TestimonialRow.FromEntity(testimonial), cancellationToken: token));
         }, ct);
 
-    private sealed record TestimonialRow(Guid Id, string ClientName, Guid? EventId, int Rating, string Comment, bool IsApproved, DateTimeOffset CreatedAtUtc)
+    /// <summary>See the remark on <c>ModuleRepository.ModuleRow</c> — init-only properties, no primary constructor.</summary>
+    private sealed record TestimonialRow
     {
+        public Guid Id { get; init; }
+        public string ClientName { get; init; } = string.Empty;
+        public Guid? EventId { get; init; }
+        public int Rating { get; init; }
+        public string Comment { get; init; } = string.Empty;
+        public bool IsApproved { get; init; }
+        public DateTimeOffset CreatedAtUtc { get; init; }
+
         public Testimonial ToEntity() => Testimonial.Rehydrate(Id, ClientName, EventId, Rating, Comment, IsApproved, CreatedAtUtc);
 
-        public static TestimonialRow FromEntity(Testimonial t) => new(t.Id, t.ClientName, t.EventId, t.Rating, t.Comment, t.IsApproved, t.CreatedAtUtc);
+        public static TestimonialRow FromEntity(Testimonial t) => new()
+        {
+            Id = t.Id,
+            ClientName = t.ClientName,
+            EventId = t.EventId,
+            Rating = t.Rating,
+            Comment = t.Comment,
+            IsApproved = t.IsApproved,
+            CreatedAtUtc = t.CreatedAtUtc,
+        };
     }
 }

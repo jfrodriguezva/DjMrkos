@@ -26,7 +26,7 @@ public static class CategoriesEndpoints
 
         admin.MapPut("/{id:guid}", async (Guid id, UpdateCategoryRequest body, ISender sender, CancellationToken ct) =>
             Results.Ok(await sender.Send(
-                new UpdateCategoryCommand(id, body.Name, body.Description, body.ImageUrl, body.DisplayOrder, body.IsActive), ct)));
+                new UpdateCategoryCommand(id, body.Name, body.Description, body.ImageUrl, body.Price, body.DisplayOrder, body.IsActive), ct)));
 
         admin.MapDelete("/{id:guid}", async (Guid id, ISender sender, CancellationToken ct) =>
         {
@@ -35,5 +35,5 @@ public static class CategoriesEndpoints
         });
     }
 
-    public sealed record UpdateCategoryRequest(string Name, string? Description, string? ImageUrl, int DisplayOrder, bool IsActive);
+    public sealed record UpdateCategoryRequest(string Name, string? Description, string? ImageUrl, decimal? Price, int DisplayOrder, bool IsActive);
 }

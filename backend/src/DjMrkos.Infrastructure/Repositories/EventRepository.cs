@@ -57,14 +57,33 @@ public sealed class EventRepository(IResilientDbExecutor db) : IEventRepository
             return connection.ExecuteAsync(new CommandDefinition(sql, EventRow.FromEntity(@event), cancellationToken: token));
         }, ct);
 
-    private sealed record EventRow(
-        Guid Id, string ClientName, string? Location, DateTimeOffset EventDateUtc, int Status,
-        string QrToken, DateTimeOffset QrValidFromUtc, DateTimeOffset QrValidUntilUtc, DateTimeOffset CreatedAtUtc)
+    /// <summary>See the remark on <c>ModuleRepository.ModuleRow</c> — init-only properties, no primary constructor.</summary>
+    private sealed record EventRow
     {
+        public Guid Id { get; init; }
+        public string ClientName { get; init; } = string.Empty;
+        public string? Location { get; init; }
+        public DateTimeOffset EventDateUtc { get; init; }
+        public int Status { get; init; }
+        public string QrToken { get; init; } = string.Empty;
+        public DateTimeOffset QrValidFromUtc { get; init; }
+        public DateTimeOffset QrValidUntilUtc { get; init; }
+        public DateTimeOffset CreatedAtUtc { get; init; }
+
         public Event ToEntity() => Event.Rehydrate(
             Id, ClientName, Location, EventDateUtc, (EventStatus)Status, QrToken, QrValidFromUtc, QrValidUntilUtc, CreatedAtUtc);
 
-        public static EventRow FromEntity(Event e) => new(
-            e.Id, e.ClientName, e.Location, e.EventDateUtc, (int)e.Status, e.QrToken, e.QrValidFromUtc, e.QrValidUntilUtc, e.CreatedAtUtc);
+        public static EventRow FromEntity(Event e) => new()
+        {
+            Id = e.Id,
+            ClientName = e.ClientName,
+            Location = e.Location,
+            EventDateUtc = e.EventDateUtc,
+            Status = (int)e.Status,
+            QrToken = e.QrToken,
+            QrValidFromUtc = e.QrValidFromUtc,
+            QrValidUntilUtc = e.QrValidUntilUtc,
+            CreatedAtUtc = e.CreatedAtUtc,
+        };
     }
 }

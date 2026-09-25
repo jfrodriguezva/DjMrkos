@@ -6,6 +6,7 @@ import { AdminLoginPage } from './pages/admin/AdminLoginPage'
 import { ContactPage } from './pages/ContactPage'
 import { HomePage } from './pages/HomePage'
 import { NotFoundPage } from './pages/NotFoundPage'
+import { QuoteBuilderPage } from './pages/QuoteBuilderPage'
 import { ServiceDetailPage } from './pages/ServiceDetailPage'
 import { ServicesPage } from './pages/ServicesPage'
 import { SongRequestPage } from './pages/SongRequestPage'
@@ -23,6 +24,7 @@ export default function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/servicios" element={<ServicesPage />} />
         <Route path="/servicios/:moduleSlug" element={<ServiceDetailPage />} />
+        <Route path="/cotizador" element={<QuoteBuilderPage />} />
         <Route path="/quienes-somos" element={<AboutPage />} />
         <Route path="/testimonios" element={<TestimonialsPage />} />
         <Route path="/contacto" element={<ContactPage />} />

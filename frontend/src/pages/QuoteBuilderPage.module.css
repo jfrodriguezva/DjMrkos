@@ -1,0 +1,350 @@
+.header {
+  padding-block: var(--space-7) var(--space-6);
+  border-bottom: 1px solid var(--border);
+}
+
+.headerLead {
+  color: var(--text-secondary);
+  margin-top: 12px;
+  max-width: 62ch;
+}
+
+.guestBar {
+  margin-top: var(--space-6);
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+}
+
+.guestField {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 220px;
+}
+
+.guestField label {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.guestInputRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.stepBtn {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong);
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: 18px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.stepBtn:hover {
+  border-color: var(--steel-bright);
+  color: var(--steel-bright);
+}
+
+.guestInputRow input {
+  width: 90px;
+  text-align: center;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  padding: 8px 6px;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 16px;
+}
+
+.tierCard {
+  flex: 1;
+  min-width: 260px;
+  padding: var(--space-4) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tierLabel {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--red-bright);
+  font-size: 14px;
+}
+
+.tierLine {
+  font-size: 13.5px;
+  color: var(--text-secondary);
+}
+
+.tierLine b {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* ---------- layout ---------- */
+
+.layout {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: var(--space-6);
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.moduleGroup {
+  margin-bottom: var(--space-6);
+}
+
+.moduleGroup h2 {
+  font-size: 16px;
+  margin-bottom: var(--space-4);
+}
+
+.itemGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--space-3);
+}
+
+.itemCard {
+  padding: var(--space-4);
+  cursor: grab;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition:
+    border-color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.itemCard:hover {
+  border-color: var(--steel-bright);
+}
+
+.itemCard:active {
+  cursor: grabbing;
+}
+
+.itemCardDragging {
+  opacity: 0.4;
+}
+
+.itemName {
+  font-weight: 700;
+  color: var(--text-primary);
+  font-size: 14.5px;
+}
+
+.itemDesc {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  flex-grow: 1;
+}
+
+.itemFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.itemPrice {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--steel-bright);
+}
+
+.itemPriceIncluded {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.addBtn {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid var(--red);
+  background: transparent;
+  color: var(--red-bright);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.addBtn:hover {
+  background: var(--red);
+  color: var(--text-on-accent);
+}
+
+/* ---------- cart ---------- */
+
+.cart {
+  position: sticky;
+  top: calc(var(--header-height) + 16px);
+  padding: var(--space-5);
+}
+
+.cart h2 {
+  font-size: 16px;
+}
+
+.dropZone {
+  margin-top: var(--space-4);
+  border: 1.5px dashed var(--border-strong);
+  border-radius: var(--radius-md);
+  min-height: 90px;
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.dropZoneActive {
+  border-color: var(--red);
+  background: var(--red-dim);
+}
+
+.dropZoneEmpty {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+  padding: var(--space-5);
+}
+
+.cartLine {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--bg-elevated);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+
+.cartLineInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.cartLineName {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cartLineUnit {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.qtyControl {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.qtyBtn {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  border: 1px solid var(--border-strong);
+  background: transparent;
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1;
+}
+
+.qtyValue {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  min-width: 16px;
+  text-align: center;
+}
+
+.removeBtn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px;
+  flex-shrink: 0;
+}
+
+.removeBtn:hover {
+  color: var(--red-bright);
+}
+
+.totalsRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+}
+
+.totalLabel {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+}
+
+.totalValue {
+  font-family: var(--font-display);
+  font-size: 28px;
+  color: var(--red-bright);
+}
+
+.totalNote {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.contactForm {
+  margin-top: var(--space-5);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.success {
+  color: var(--success);
+  font-size: 13.5px;
+  margin-top: var(--space-4);
+}
