@@ -12,14 +12,18 @@ frontend/src/
 ├── lib/
 │   ├── apiClient.ts      # fetch tipado, maneja la API key de admin y errores como ApiError
 │   ├── queryClient.ts    # Configuración de React Query
-│   └── signalr.ts        # Fábrica de la conexión al hub de solicitudes de canciones
+│   ├── signalr.ts        # Fábrica de la conexión al hub de solicitudes de canciones
+│   └── usePlanner.ts     # Estado compartido (carrito, invitados, fecha) persistido en localStorage
 ├── types/api.ts           # Tipos que reflejan uno a uno los DTOs de DjMrkos.Application
 ├── components/
 │   ├── layout/            # Header (menú dinámico), Footer, SiteLayout
+│   ├── quote/              # CatalogGrid y CartPanel — compartidos por Cotizador y Contratar
 │   └── ui/                 # Button, Badge, Equalizer, PageState (loading/error/empty)
 └── pages/
     ├── HomePage, ServicesPage, ServiceDetailPage, AboutPage, TestimonialsPage, ContactPage
     ├── QuoteBuilderPage      # /cotizador — el presupuesto tipo carrito, drag & drop
+    ├── SchedulePage           # /agendar — calendario de disponibilidad real
+    ├── HirePage               # /contratar — revisión final + solicitud de contratación
     ├── SongRequestPage      # /evento/:token — la página que abre el QR, fuera del layout del sitio
     └── admin/
         ├── AdminLoginPage
@@ -44,6 +48,13 @@ El motivo visual recurrente es el ecualizador (`components/ui/Equalizer.tsx`) �
 El campo **invitados esperados** no filtra ni oculta artículos — alimenta una recomendación textual (`lib/currency.ts#audienceTierFor`, una tabla de umbrales fija) sobre cuánto audio e iluminación conviene para ese tamaño de evento. Es una guía, no una automatización: el usuario sigue eligiendo todo a mano.
 
 No existe un backend de "presupuestos" — al enviar, el carrito compone un resumen de texto (artículos, cantidades, total, invitados) y lo manda como `message` de un `Lead` normal (`POST /api/leads`). El panel admin ve la cotización completa en la pestaña **Cotizaciones**, sin una tabla ni endpoint nuevos.
+
+## El embudo Agendar → Cotizar → Contratar
+
+Tres páginas, un solo estado: `lib/usePlanner.ts` guarda `{ cart, guestCount, preferredDate }` en `localStorage` bajo una sola llave. No hay Context ni Provider — cada página lo lee al montar, lo cual alcanza porque `/agendar`, `/cotizador` y `/contratar` nunca están montadas a la vez (son rutas distintas). El resultado es una sesión que sobrevive a la navegación sin login: eliges una fecha en el calendario de `/agendar`, arrastras servicios en `/cotizador`, y ambos ya están ahí cuando llegas a `/contratar`.
+
+- **`SchedulePage.tsx`** (`/agendar`) — calendario mensual construido a mano (sin librería), coloreado con `GET /api/availability`. Un día "ocupado" viene de un evento real en la base de datos, no de una fecha inventada — apartar una fecha aquí es coherente con lo que el panel admin también ve.
+- **`HirePage.tsx`** (`/contratar`) — reutiliza `CatalogGrid` y `CartPanel` (los mismos componentes que `QuoteBuilderPage`) para que el carrito se pueda seguir editando, y agrega fecha, checkbox de términos y datos de contacto. Al enviar, antepone `"SOLICITUD DE CONTRATACIÓN"` al mensaje del `Lead` — es la única diferencia de esquema entre "pedir una cotización" y "pedir contratar", y es suficiente para que `LeadsPanel.tsx` (`leadKind()`) le ponga una etiqueta distinta en el panel admin sin agregar una columna a la base de datos.
 
 ## Tiempo real
 

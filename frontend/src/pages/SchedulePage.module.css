@@ -1,0 +1,192 @@
+.header {
+  padding-block: var(--space-7) var(--space-6);
+  border-bottom: 1px solid var(--border);
+}
+
+.headerLead {
+  color: var(--text-secondary);
+  margin-top: 12px;
+  max-width: 62ch;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: var(--space-6);
+  align-items: start;
+}
+
+@media (max-width: 860px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.calendarCard {
+  padding: var(--space-5);
+}
+
+.calendarHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+}
+
+.monthLabel {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 16px;
+}
+
+.navBtn {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong);
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.navBtn:hover {
+  border-color: var(--steel-bright);
+  color: var(--steel-bright);
+}
+
+.navBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.weekRow {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.weekRow span {
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.dayGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  border: 1px solid transparent;
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.day:hover:not(:disabled) {
+  border-color: var(--steel-bright);
+  color: var(--text-primary);
+}
+
+.day:disabled {
+  cursor: not-allowed;
+  color: var(--text-muted);
+  opacity: 0.3;
+  background: transparent;
+}
+
+.dayBusy {
+  background: var(--red-dim);
+  color: var(--red-bright);
+  text-decoration: line-through;
+}
+
+.dayEmpty {
+  visibility: hidden;
+}
+
+.daySelected {
+  background: var(--red);
+  color: var(--text-on-accent);
+  border-color: var(--red);
+  font-weight: 700;
+}
+
+.legend {
+  display: flex;
+  gap: var(--space-4);
+  margin-top: var(--space-5);
+  flex-wrap: wrap;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.legendSwatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+
+.sidePanel {
+  padding: var(--space-5);
+  position: sticky;
+  top: calc(var(--header-height) + 16px);
+}
+
+.sidePanel h2 {
+  font-size: 16px;
+  margin-bottom: var(--space-4);
+}
+
+.selectedDate {
+  font-family: var(--font-display);
+  font-size: 22px;
+  color: var(--red-bright);
+  text-transform: capitalize;
+}
+
+.selectedHint {
+  color: var(--text-secondary);
+  font-size: 13.5px;
+  margin-top: var(--space-3);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--border);
+}
+
+.success {
+  color: var(--success);
+  font-size: 13.5px;
+  margin-top: var(--space-4);
+}
+
+.emptySelection {
+  color: var(--text-muted);
+  font-size: 13.5px;
+}

@@ -91,11 +91,19 @@
 }
 
 .dropdownItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   padding: 8px 12px;
   border-radius: var(--radius-sm);
   font-family: var(--font-body);
   font-size: 14px;
   color: var(--text-secondary);
+}
+
+.dropdownItem svg {
+  color: var(--steel-bright);
+  flex-shrink: 0;
 }
 
 .dropdownItem:hover {

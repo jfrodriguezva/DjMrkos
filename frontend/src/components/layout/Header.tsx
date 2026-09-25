@@ -4,6 +4,7 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import { api } from '../../lib/apiClient'
 import type { MenuModule } from '../../types/api'
 import { Button } from '../ui/Button'
+import { ModuleIcon } from '../ui/ModuleIcon'
 import styles from './Header.module.css'
 
 /**
@@ -40,6 +41,7 @@ export function Header() {
               <div className={`${styles.dropdown} card`}>
                 {modules.map((m) => (
                   <NavLink key={m.id} to={`/servicios/${m.slug}`} className={styles.dropdownItem}>
+                    <ModuleIcon name={m.icon} size={16} />
                     {m.name}
                   </NavLink>
                 ))}
@@ -50,20 +52,20 @@ export function Header() {
           <NavLink to="/quienes-somos" className={link}>
             Quiénes somos
           </NavLink>
-          <NavLink to="/testimonios" className={link}>
-            Testimonios
+          <NavLink to="/agendar" className={link}>
+            Agendar
           </NavLink>
           <NavLink to="/cotizador" className={link}>
             Cotizador
           </NavLink>
-          <NavLink to="/contacto" className={link}>
-            Contacto
+          <NavLink to="/testimonios" className={link}>
+            Testimonios
           </NavLink>
         </nav>
 
         <div className={styles.actions}>
-          <Button size="sm" onClick={() => navigate('/cotizador')}>
-            Cotizar
+          <Button size="sm" onClick={() => navigate('/contratar')}>
+            Contratar
           </Button>
           <button
             className={styles.menuToggle}
@@ -87,11 +89,17 @@ export function Header() {
           <NavLink to="/quienes-somos" className={styles.mobileLink} onClick={() => setMobileOpen(false)}>
             Quiénes somos
           </NavLink>
-          <NavLink to="/testimonios" className={styles.mobileLink} onClick={() => setMobileOpen(false)}>
-            Testimonios
+          <NavLink to="/agendar" className={styles.mobileLink} onClick={() => setMobileOpen(false)}>
+            Agendar
           </NavLink>
           <NavLink to="/cotizador" className={styles.mobileLink} onClick={() => setMobileOpen(false)}>
             Cotizador
+          </NavLink>
+          <NavLink to="/contratar" className={styles.mobileLink} onClick={() => setMobileOpen(false)}>
+            Contratar
+          </NavLink>
+          <NavLink to="/testimonios" className={styles.mobileLink} onClick={() => setMobileOpen(false)}>
+            Testimonios
           </NavLink>
           <NavLink to="/contacto" className={styles.mobileLink} onClick={() => setMobileOpen(false)}>
             Contacto

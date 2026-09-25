@@ -18,6 +18,12 @@ public static class EventsEndpoints
             .WithTags("Events")
             .AllowAnonymous();
 
+        // Public: powers the /agendar availability calendar — dates only, never client details.
+        app.MapGet("/api/availability", async (ISender sender, CancellationToken ct) =>
+            Results.Ok(await sender.Send(new GetBusyDatesQuery(), ct)))
+            .WithTags("Events")
+            .AllowAnonymous();
+
         var admin = app.MapGroup("/api/admin/events")
             .WithTags("Admin · Events")
             .RequireAuthorization(ApiKeyAuthenticationHandler.SchemeName);

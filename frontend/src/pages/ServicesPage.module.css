@@ -19,6 +19,14 @@
 
 .moduleInfo h3 {
   margin-bottom: var(--space-2);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.moduleInfo h3 svg {
+  color: var(--steel-bright);
+  flex-shrink: 0;
 }
 
 .categoryChips {

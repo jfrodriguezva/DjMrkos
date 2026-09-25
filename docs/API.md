@@ -28,6 +28,7 @@ Los endpoints bajo `/api/admin/*` requieren el header `X-Api-Key: <clave>` (ver 
 | GET | `/api/events/qr/{token}` | Público — lo llama la página QR al abrirse. Devuelve `{ id, clientName, eventDateUtc, isRequestWindowOpen }`. `404` si el token no existe, la ventana cerrada se refleja en `isRequestWindowOpen: false` (no en el código de estado). |
 | GET | `/api/admin/events` | Próximos eventos (no cancelados), ordenados por fecha. |
 | POST | `/api/admin/events` | Crea un evento y emite su token de QR. Responde `{ event, qrCodeDataUrl }` — el PNG del QR ya listo para mostrar/imprimir. |
+| GET | `/api/availability` | Público. Devuelve `string[]` de fechas (`YYYY-MM-DD`) con al menos un evento no cancelado — nunca nombres de cliente. Alimenta el calendario de `/agendar`. |
 
 ## Solicitudes de canciones
 

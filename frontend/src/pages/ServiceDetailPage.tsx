@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link, useParams } from 'react-router-dom'
 import { EmptyState, LoadingState } from '../components/ui/PageState'
+import { ModuleIcon } from '../components/ui/ModuleIcon'
 import { api } from '../lib/apiClient'
 import { formatMxn } from '../lib/currency'
 import type { MenuModule } from '../types/api'
@@ -34,7 +35,10 @@ export function ServiceDetailPage() {
           <div className={styles.breadcrumb}>
             <Link to="/servicios">Servicios</Link> / {module_.name}
           </div>
-          <h1>{module_.name}</h1>
+          <h1 className={styles.titleRow}>
+            <ModuleIcon name={module_.icon} size={28} />
+            {module_.name}
+          </h1>
         </div>
       </div>
 

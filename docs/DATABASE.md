@@ -89,4 +89,6 @@ Los repositorios mapean cada fila a un `record` con **solo propiedades `init`** 
 dotnet run --project backend/src/DjMrkos.Migrator -- "Host=localhost;Port=5432;Database=djmrkos;Username=djmrkos;Password=djmrkos_dev"
 ```
 
-`0001_InitialSchema.sql` crea las tablas; `0002_SeedMenu.sql` siembra el catálogo de ejemplo (Luces, Música, Cabina, Sonido) para que el portal tenga contenido real desde el primer arranque. Agregar un cambio de esquema es agregar un archivo `000N_Descripcion.sql` nuevo en `Scripts/` — DbUp lleva su propio registro de qué scripts ya corrieron y nunca reaplica uno.
+`0001_InitialSchema.sql` crea las tablas. `0002_SeedMenu.sql` y `0003_CategoryPricingAndEntertainment.sql` sembraron un catálogo de ejemplo inicial; `0004_FullServiceCatalog.sql` lo **reemplaza por completo** con el catálogo real del negocio — 7 módulos y 44 categorías con precio (Personal y Staff, Cabina, Iluminación, Efectos Especiales, Pantallas y Proyección, Audio Profesional, Personajes y Shows). Es seguro vaciar y repoblar `modules`/`categories` en una sola migración porque ninguna otra tabla las referencia por clave foránea.
+
+Agregar un cambio de esquema es agregar un archivo `000N_Descripcion.sql` nuevo en `Scripts/` — nunca edites uno que ya corrió; DbUp lleva su propio registro de qué scripts ya se aplicaron y nunca reaplica uno.

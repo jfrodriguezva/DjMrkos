@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import { Equalizer } from '../components/ui/Equalizer'
+import { ModuleIcon } from '../components/ui/ModuleIcon'
 import { api } from '../lib/apiClient'
 import type { MenuModule, Testimonial } from '../types/api'
 import styles from './HomePage.module.css'
@@ -55,7 +56,9 @@ export function HomePage() {
             <div className={styles.moduleGrid}>
               {modules.map((m) => (
                 <Link key={m.id} to={`/servicios/${m.slug}`} className={`card ${styles.moduleCard}`}>
-                  <div className={styles.moduleIcon}>{m.name.slice(0, 2)}</div>
+                  <div className={styles.moduleIcon}>
+                    <ModuleIcon name={m.icon} size={20} />
+                  </div>
                   <h3>{m.name}</h3>
                   <p>{m.categories.length} categoría{m.categories.length === 1 ? '' : 's'} disponible{m.categories.length === 1 ? '' : 's'}</p>
                 </Link>

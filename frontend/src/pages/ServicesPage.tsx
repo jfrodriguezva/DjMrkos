@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import { EmptyState, LoadingState } from '../components/ui/PageState'
+import { ModuleIcon } from '../components/ui/ModuleIcon'
 import { api } from '../lib/apiClient'
 import type { MenuModule } from '../types/api'
 import styles from './ServicesPage.module.css'
@@ -32,7 +33,10 @@ export function ServicesPage() {
             {modules.map((m) => (
               <div key={m.id} className={`card ${styles.moduleRow}`}>
                 <div className={styles.moduleInfo}>
-                  <h3>{m.name}</h3>
+                  <h3>
+                    <ModuleIcon name={m.icon} />
+                    {m.name}
+                  </h3>
                   {m.categories.length > 0 ? (
                     <div className={styles.categoryChips}>
                       {m.categories.map((c) => (

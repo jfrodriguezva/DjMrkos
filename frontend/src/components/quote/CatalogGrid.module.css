@@ -1,0 +1,97 @@
+.moduleGroup {
+  margin-bottom: var(--space-6);
+}
+
+.moduleGroup h2 {
+  font-size: 16px;
+  margin-bottom: var(--space-4);
+}
+
+.moduleHeading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.moduleHeading svg {
+  color: var(--red-bright);
+  flex-shrink: 0;
+}
+
+.itemGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--space-3);
+}
+
+.itemCard {
+  padding: var(--space-4);
+  cursor: grab;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition:
+    border-color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.itemCard:hover {
+  border-color: var(--steel-bright);
+}
+
+.itemCard:active {
+  cursor: grabbing;
+}
+
+.itemCardDragging {
+  opacity: 0.4;
+}
+
+.itemName {
+  font-weight: 700;
+  color: var(--text-primary);
+  font-size: 14.5px;
+}
+
+.itemDesc {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  flex-grow: 1;
+}
+
+.itemFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.itemPrice {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--steel-bright);
+}
+
+.itemPriceIncluded {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.addBtn {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid var(--red);
+  background: transparent;
+  color: var(--red-bright);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.addBtn:hover {
+  background: var(--red);
+  color: var(--text-on-accent);
+}

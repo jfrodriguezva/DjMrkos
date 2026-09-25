@@ -24,9 +24,11 @@ export function Footer() {
           </div>
 
           <div>
-            <div className={styles.heading}>Para tu evento</div>
+            <div className={styles.heading}>Reserva tu evento</div>
             <div className={styles.links}>
-              <span>¿Ya contrataste? Pide tu canción escaneando el QR de tu evento.</span>
+              <Link to="/agendar">Agendar</Link>
+              <Link to="/cotizador">Cotizar</Link>
+              <Link to="/contratar">Contratar</Link>
             </div>
           </div>
         </div>

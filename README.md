@@ -1,6 +1,6 @@
 # DJ MrKos
 
-Portal web para DJ MrKos: catálogo de servicios **configurable** (Módulos → Categorías), solicitud de canciones en vivo por **código QR**, panel de administración, y todo el contenido de marca (misión, visión, objetivos, paleta).
+Portal web para DJ MrKos: catálogo de servicios **configurable** (Módulos → Categorías, con precio), un embudo de reserva **Agendar → Cotizar → Contratar**, solicitud de canciones en vivo por **código QR**, panel de administración, y todo el contenido de marca (misión, visión, objetivos, paleta).
 
 - **Backend:** .NET 10 · Clean Architecture · Dapper · Polly · SignalR
 - **Frontend:** React 19 · Vite · TypeScript · React Query
@@ -45,7 +45,7 @@ Levanta PostgreSQL en `localhost:5432` con las credenciales que ya están en `ba
 dotnet run --project backend/src/DjMrkos.Migrator -- "Host=localhost;Port=5432;Database=djmrkos;Username=djmrkos;Password=djmrkos_dev"
 ```
 
-Esto crea las tablas y siembra el catálogo de ejemplo (Luces, Música, Cabina, Sonido con sus categorías).
+Esto crea las tablas y siembra el catálogo real del negocio: 7 módulos y 44 servicios con precio (Personal y Staff, Cabina, Iluminación, Efectos Especiales, Pantallas y Proyección, Audio Profesional, Personajes y Shows).
 
 ### 3. Backend
 
@@ -67,10 +67,17 @@ Corre en `http://localhost:5173` y hace proxy de `/api` y `/hubs` hacia el backe
 
 ## Probar el flujo completo
 
+**Solicitud de canciones en vivo:**
 1. Entra al panel: `http://localhost:5173/admin/login` con la API key de desarrollo `dev-admin-key`.
 2. En la pestaña **Eventos**, crea un evento — se genera su código QR al instante.
 3. Abre `http://localhost:5173/evento/{token}` (el token que se generó) en otra pestaña o en tu celular — pide una canción.
 4. Vuelve al panel, pestaña **Cola en vivo**: la solicitud aparece en tiempo real vía SignalR.
+
+**Embudo de reserva (Agendar → Cotizar → Contratar):**
+1. Abre `http://localhost:5173/agendar`, elige una fecha disponible en el calendario.
+2. Ve a `/cotizador` y arrastra (o toca **+**) los servicios que quieras — la fecha elegida se conserva.
+3. Ve a `/contratar`: verás el mismo presupuesto y fecha, listos para confirmar.
+4. En el panel admin, pestaña **Cotizaciones**, la solicitud aparece etiquetada **Contratación**, **Cotización** o **Agendar** según de dónde vino.
 
 ## Documentación
 

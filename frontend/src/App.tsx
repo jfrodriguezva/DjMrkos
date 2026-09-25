@@ -4,9 +4,11 @@ import { AboutPage } from './pages/AboutPage'
 import { AdminDashboardPage } from './pages/admin/AdminDashboardPage'
 import { AdminLoginPage } from './pages/admin/AdminLoginPage'
 import { ContactPage } from './pages/ContactPage'
+import { HirePage } from './pages/HirePage'
 import { HomePage } from './pages/HomePage'
 import { NotFoundPage } from './pages/NotFoundPage'
 import { QuoteBuilderPage } from './pages/QuoteBuilderPage'
+import { SchedulePage } from './pages/SchedulePage'
 import { ServiceDetailPage } from './pages/ServiceDetailPage'
 import { ServicesPage } from './pages/ServicesPage'
 import { SongRequestPage } from './pages/SongRequestPage'
@@ -25,6 +27,8 @@ export default function App() {
         <Route path="/servicios" element={<ServicesPage />} />
         <Route path="/servicios/:moduleSlug" element={<ServiceDetailPage />} />
         <Route path="/cotizador" element={<QuoteBuilderPage />} />
+        <Route path="/agendar" element={<SchedulePage />} />
+        <Route path="/contratar" element={<HirePage />} />
         <Route path="/quienes-somos" element={<AboutPage />} />
         <Route path="/testimonios" element={<TestimonialsPage />} />
         <Route path="/contacto" element={<ContactPage />} />
