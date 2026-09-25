@@ -38,8 +38,8 @@ export function ContactPage() {
         <div className={styles.layout}>
           <div>
             <p style={{ color: 'var(--text-secondary)' }}>
-              Cuéntanos la fecha, el lugar y qué módulos te interesan — música, luces, cabina, sonido — y te armamos una
-              propuesta a la medida.
+              Cuéntanos la fecha, el lugar y qué servicios te interesan — audio, iluminación, efectos, pantallas, animación —
+              y te armamos una propuesta a la medida.
             </p>
             <div className={styles.infoList}>
               <div className={styles.infoItem}>

@@ -17,11 +17,22 @@ interface PlannerState {
 const STORAGE_KEY = 'djmrkos.planner'
 const DEFAULT_STATE: PlannerState = { cart: [], guestCount: 100, preferredDate: null }
 
+const MIN_GUESTS = 10
+const MAX_GUESTS = 2000
+
+/** Guards every entry point (typed input, +/− steppers) the same way, so none of them can bypass the bounds the others enforce. */
+export function clampGuestCount(value: number): number {
+  if (Number.isNaN(value)) return MIN_GUESTS
+  return Math.min(MAX_GUESTS, Math.max(MIN_GUESTS, Math.round(value)))
+}
+
 function loadState(): PlannerState {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (!raw) return DEFAULT_STATE
-    return { ...DEFAULT_STATE, ...(JSON.parse(raw) as Partial<PlannerState>) }
+    const merged = { ...DEFAULT_STATE, ...(JSON.parse(raw) as Partial<PlannerState>) }
+    // Re-clamps on load too — a value saved before this bound existed (or edited by hand) shouldn't survive a refresh.
+    return { ...merged, guestCount: clampGuestCount(merged.guestCount) }
   } catch {
     return DEFAULT_STATE
   }
@@ -66,7 +77,7 @@ export function usePlanner() {
   }, [])
 
   const setGuestCount = useCallback((guestCount: number) => {
-    setState((prev) => ({ ...prev, guestCount }))
+    setState((prev) => ({ ...prev, guestCount: clampGuestCount(guestCount) }))
   }, [])
 
   const setPreferredDate = useCallback((preferredDate: string | null) => {

@@ -10,7 +10,7 @@ export function Footer() {
             <div className={styles.brand}>
               DJ <span>MrKos</span>
             </div>
-            <p className={styles.tagline}>Música, luces, cabina y sonido — el pulso de tu evento, de principio a fin.</p>
+            <p className={styles.tagline}>Audio, iluminación, efectos y animación — el pulso de tu evento, de principio a fin.</p>
           </div>
 
           <div>

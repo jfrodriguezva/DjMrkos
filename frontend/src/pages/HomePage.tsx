@@ -21,9 +21,9 @@ export function HomePage() {
         <div className="container">
           <Equalizer />
           <div className={styles.heroContent} style={{ marginTop: 24 }}>
-            <span className="eyebrow">DJ · Iluminación · Sonido para eventos</span>
+            <span className="eyebrow">DJ · Iluminación · Producción de eventos</span>
             <h1>El pulso de tu evento</h1>
-            <p className={styles.heroTagline}>Música, luces, cabina y sonido — en un portal tan configurable como tu set.</p>
+            <p className={styles.heroTagline}>Audio, iluminación, efectos y animación — arma tu evento servicio por servicio.</p>
             <p className={`${styles.lead} lead`}>
               Bodas, XV años, corporativos y fiestas privadas. Armamos el equipo exacto que tu evento necesita, y tus invitados
               pueden pedir canciones en vivo escaneando un código QR — la petición te llega directo a la cabina.

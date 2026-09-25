@@ -68,7 +68,7 @@ export function QuoteBuilderPage() {
                 <button
                   type="button"
                   className={styles.stepBtn}
-                  onClick={() => planner.setGuestCount(Math.max(10, planner.guestCount - 10))}
+                  onClick={() => planner.setGuestCount(planner.guestCount - 10)}
                   aria-label="Menos invitados"
                 >
                   −
@@ -79,12 +79,12 @@ export function QuoteBuilderPage() {
                   min={10}
                   max={2000}
                   value={planner.guestCount}
-                  onChange={(e) => planner.setGuestCount(Math.max(10, Number(e.target.value) || 10))}
+                  onChange={(e) => planner.setGuestCount(Number(e.target.value))}
                 />
                 <button
                   type="button"
                   className={styles.stepBtn}
-                  onClick={() => planner.setGuestCount(Math.min(2000, planner.guestCount + 10))}
+                  onClick={() => planner.setGuestCount(planner.guestCount + 10)}
                   aria-label="Más invitados"
                 >
                   +
