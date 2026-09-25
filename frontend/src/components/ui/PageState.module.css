@@ -1,0 +1,21 @@
+.state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  padding-block: var(--space-8);
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.state p {
+  max-width: 46ch;
+}
+
+.title {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-primary);
+  font-size: 18px;
+}

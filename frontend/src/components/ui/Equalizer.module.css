@@ -1,0 +1,31 @@
+.eq {
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+  height: 40px;
+}
+
+.bar {
+  width: 6px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, var(--red-bright), var(--steel));
+  animation: pulse 1.6s ease-in-out infinite;
+  transform-origin: bottom;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scaleY(0.45);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar {
+    animation: none;
+    transform: scaleY(0.75);
+  }
+}

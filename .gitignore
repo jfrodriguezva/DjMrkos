@@ -1,0 +1,17 @@
+# .NET
+backend/**/bin/
+backend/**/obj/
+*.user
+
+# Node / Vite
+frontend/node_modules/
+frontend/dist/
+
+# Environment / secrets
+**/appsettings.*.local.json
+.env
+.env.local
+
+# OS / editor
+.DS_Store
+Thumbs.db

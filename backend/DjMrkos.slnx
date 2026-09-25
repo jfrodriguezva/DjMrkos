@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/DjMrkos.Api/DjMrkos.Api.csproj" />
+    <Project Path="src/DjMrkos.Application/DjMrkos.Application.csproj" />
+    <Project Path="src/DjMrkos.Domain/DjMrkos.Domain.csproj" />
+    <Project Path="src/DjMrkos.Infrastructure/DjMrkos.Infrastructure.csproj" />
+    <Project Path="src/DjMrkos.Migrator/DjMrkos.Migrator.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/DjMrkos.Application.UnitTests/DjMrkos.Application.UnitTests.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,87 @@
+.header {
+  padding-block: var(--space-7) var(--space-6);
+  border-bottom: 1px solid var(--border);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: var(--space-6);
+  align-items: start;
+}
+
+@media (max-width: 800px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.grid {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.testimonialCard {
+  padding: var(--space-5);
+}
+
+.stars {
+  color: var(--red-bright);
+  font-family: var(--font-mono);
+  letter-spacing: 2px;
+  margin-bottom: var(--space-3);
+}
+
+.testimonialCard p {
+  color: var(--text-secondary);
+  font-size: 14.5px;
+}
+
+.name {
+  margin-top: var(--space-4);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.formCard {
+  padding: var(--space-5);
+  position: sticky;
+  top: calc(var(--header-height) + 16px);
+}
+
+.formCard h2 {
+  font-size: 16px;
+  margin-bottom: var(--space-4);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.ratingRow {
+  display: flex;
+  gap: 6px;
+}
+
+.starButton {
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: var(--border-strong);
+  padding: 0;
+  line-height: 1;
+}
+
+.starButtonActive {
+  color: var(--red-bright);
+}
+
+.success {
+  color: var(--success);
+  font-size: 13.5px;
+}

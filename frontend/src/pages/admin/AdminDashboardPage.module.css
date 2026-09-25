@@ -1,0 +1,56 @@
+.shell {
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+.topbar {
+  height: var(--header-height);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.brand span {
+  color: var(--red-bright);
+}
+
+.tabs {
+  display: flex;
+  gap: var(--space-2);
+  padding-block: var(--space-4);
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+}
+
+.tab {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 9px 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong);
+  color: var(--text-secondary);
+  background: transparent;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.tabActive {
+  border-color: var(--red);
+  color: var(--red-bright);
+  background: var(--red-dim);
+}
+
+.content {
+  padding-block: var(--space-6);
+}

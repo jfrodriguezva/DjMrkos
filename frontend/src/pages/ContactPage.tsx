@@ -1,0 +1,115 @@
+import { useMutation } from '@tanstack/react-query'
+import { useState } from 'react'
+import { Button } from '../components/ui/Button'
+import { ApiError, api } from '../lib/apiClient'
+import type { ApiProblem, Lead } from '../types/api'
+import styles from './ContactPage.module.css'
+
+export function ContactPage() {
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
+  const [eventDate, setEventDate] = useState('')
+  const [message, setMessage] = useState('')
+
+  const submit = useMutation({
+    mutationFn: () =>
+      api.post<Lead>('/leads', {
+        name,
+        email,
+        phone: phone || null,
+        eventDate: eventDate || null,
+        message,
+      }),
+  })
+
+  const problem = submit.error instanceof ApiError ? (submit.error.problem as ApiProblem) : null
+
+  return (
+    <>
+      <div className={styles.header}>
+        <div className="container">
+          <span className="eyebrow">Hablemos de tu evento</span>
+          <h1>Cotizar</h1>
+        </div>
+      </div>
+
+      <div className="container section">
+        <div className={styles.layout}>
+          <div>
+            <p style={{ color: 'var(--text-secondary)' }}>
+              Cuéntanos la fecha, el lugar y qué módulos te interesan — música, luces, cabina, sonido — y te armamos una
+              propuesta a la medida.
+            </p>
+            <div className={styles.infoList}>
+              <div className={styles.infoItem}>
+                <div className="label">Respuesta</div>
+                <div className="value">En menos de 24 horas</div>
+              </div>
+              <div className={styles.infoItem}>
+                <div className="label">Cobertura</div>
+                <div className="value">Bodas · XV años · Corporativos · Fiestas privadas</div>
+              </div>
+            </div>
+          </div>
+
+          <div className={`card ${styles.formCard}`}>
+            {submit.isSuccess ? (
+              <p className={styles.success}>
+                ¡Gracias, {name.split(' ')[0]}! Recibimos tu solicitud y te contactaremos muy pronto.
+              </p>
+            ) : (
+              <form
+                className={styles.form}
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  submit.mutate()
+                }}
+              >
+                <div className={styles.row2}>
+                  <div className="field">
+                    <label htmlFor="name">Nombre</label>
+                    <input id="name" value={name} onChange={(e) => setName(e.target.value)} required maxLength={120} />
+                  </div>
+                  <div className="field">
+                    <label htmlFor="email">Correo</label>
+                    <input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required maxLength={200} />
+                  </div>
+                </div>
+
+                <div className={styles.row2}>
+                  <div className="field">
+                    <label htmlFor="phone">Teléfono (opcional)</label>
+                    <input id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} maxLength={30} />
+                  </div>
+                  <div className="field">
+                    <label htmlFor="eventDate">Fecha del evento (opcional)</label>
+                    <input id="eventDate" type="date" value={eventDate} onChange={(e) => setEventDate(e.target.value)} />
+                  </div>
+                </div>
+
+                <div className="field">
+                  <label htmlFor="message">Cuéntanos de tu evento</label>
+                  <textarea
+                    id="message"
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    required
+                    maxLength={1000}
+                    placeholder="Tipo de evento, número de invitados, lugar, módulos de interés…"
+                  />
+                </div>
+
+                <Button type="submit" disabled={submit.isPending}>
+                  {submit.isPending ? 'Enviando…' : 'Enviar solicitud'}
+                </Button>
+
+                {problem && <p className="field-error">{problem.title}</p>}
+              </form>
+            )}
+          </div>
+        </div>
+      </div>
+    </>
+  )
+}
