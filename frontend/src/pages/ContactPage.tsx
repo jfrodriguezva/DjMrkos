@@ -1,5 +1,6 @@
 import { useMutation } from '@tanstack/react-query'
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { Button } from '../components/ui/Button'
 import { ApiError, api } from '../lib/apiClient'
 import type { ApiProblem, Lead } from '../types/api'
@@ -29,8 +30,8 @@ export function ContactPage() {
     <>
       <div className={styles.header}>
         <div className="container">
-          <span className="eyebrow">Hablemos de tu evento</span>
-          <h1>Cotizar</h1>
+          <span className="eyebrow">Contacto directo</span>
+          <h1>Escríbenos</h1>
         </div>
       </div>
 
@@ -38,8 +39,12 @@ export function ContactPage() {
         <div className={styles.layout}>
           <div>
             <p style={{ color: 'var(--text-secondary)' }}>
-              Cuéntanos la fecha, el lugar y qué servicios te interesan — audio, iluminación, efectos, pantallas, animación —
-              y te armamos una propuesta a la medida.
+              ¿Ya sabes qué servicios quieres? Arma tu presupuesto en el{' '}
+              <Link to="/cotizador" style={{ color: 'var(--steel-bright)' }}>
+                cotizador interactivo
+              </Link>
+              . Si prefieres platicarlo directo — dudas, fechas ajustadas o algo fuera del catálogo — escríbenos aquí y te
+              respondemos en persona.
             </p>
             <div className={styles.infoList}>
               <div className={styles.infoItem}>
@@ -56,7 +61,7 @@ export function ContactPage() {
           <div className={`card ${styles.formCard}`}>
             {submit.isSuccess ? (
               <p className={styles.success}>
-                ¡Gracias, {name.split(' ')[0]}! Recibimos tu solicitud y te contactaremos muy pronto.
+                ¡Gracias, {name.split(' ')[0]}! Recibimos tu mensaje y te contactaremos muy pronto.
               </p>
             ) : (
               <form
@@ -89,19 +94,19 @@ export function ContactPage() {
                 </div>
 
                 <div className="field">
-                  <label htmlFor="message">Cuéntanos de tu evento</label>
+                  <label htmlFor="message">¿En qué te ayudamos?</label>
                   <textarea
                     id="message"
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     required
                     maxLength={1000}
-                    placeholder="Tipo de evento, número de invitados, lugar, módulos de interés…"
+                    placeholder="Tu duda, tu evento, o algo que no encontraste en el catálogo…"
                   />
                 </div>
 
                 <Button type="submit" disabled={submit.isPending}>
-                  {submit.isPending ? 'Enviando…' : 'Enviar solicitud'}
+                  {submit.isPending ? 'Enviando…' : 'Enviar mensaje'}
                 </Button>
 
                 {problem && <p className="field-error">{problem.title}</p>}
