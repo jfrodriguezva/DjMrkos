@@ -1,0 +1,72 @@
+# DJ MrKos on the shared VPS: ONLY the app. SQL Server and the HTTPS proxy (Caddy, owner
+# of 80/443) are shared infrastructure in ~/infra (repo jfrodriguezva/vps-infra):
+#   - network "edge": infra-caddy reaches mrkos-web:80 (site in ~/infra/caddy/sites/djmrkos.caddy).
+#   - network "data": the API and migrator reach SQL Server as "sqlserver", with the
+#     app's own login (DB_USER/DB_PASSWORD), never sa.
+# ~/infra must be up first (it creates the edge and data networks).
+#
+# Layout on the VPS:
+#
+#   ~/Mrkos/
+#     docker-compose.yml   <- copied here by deploy.sh
+#     .env                 <- secrets (created by deploy.sh on the first run)
+#     DjMrkos/             <- git clone of this repo
+#
+# Service names are mrkos- prefixed on purpose: on the shared edge/data networks a
+# generic name like "api" would collide with other apps' services.
+
+name: mrkos
+
+services:
+  mrkos-migrator:
+    build:
+      context: ./DjMrkos/backend
+      dockerfile: src/DjMrkos.Migrator/Dockerfile
+    container_name: mrkos-migrator
+    command: ["Server=sqlserver,1433;Database=djmrkos;User Id=${DB_USER};Password=${DB_PASSWORD};TrustServerCertificate=True"]
+    restart: "no"
+    networks: [data]
+
+  mrkos-api:
+    build:
+      context: ./DjMrkos/backend
+      dockerfile: src/DjMrkos.Api/Dockerfile
+    container_name: mrkos-api
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      Database__ConnectionString: "Server=sqlserver,1433;Database=djmrkos;User Id=${DB_USER};Password=${DB_PASSWORD};TrustServerCertificate=True"
+      Qr__SigningKey: ${QR_SIGNING_KEY}
+      Admin__ApiKey: ${ADMIN_API_KEY}
+      Telegram__BotToken: ${TELEGRAM_BOT_TOKEN:-}
+      Telegram__ChatId: ${TELEGRAM_CHAT_ID:-}
+      Frontend__PublicBaseUrl: https://${DOMAIN}
+      Frontend__AllowedOrigins__0: https://${DOMAIN}
+    depends_on:
+      mrkos-migrator:
+        condition: service_completed_successfully
+    # "default" is Mrkos's own private network: mrkos-web reaches the API there, so the
+    # API itself is never exposed on edge.
+    networks: [default, data]
+
+  mrkos-web:
+    build:
+      context: ./DjMrkos/frontend
+      dockerfile: Dockerfile
+    container_name: mrkos-web
+    restart: unless-stopped
+    volumes:
+      # Plain-HTTP Caddyfile: infra-caddy terminates HTTPS for this domain.
+      - ./DjMrkos/deploy/vps/Caddyfile:/etc/caddy/Caddyfile:ro
+    depends_on:
+      mrkos-api:
+        condition: service_healthy
+    networks: [default, edge]
+
+networks:
+  edge:
+    external: true
+    name: edge
+  data:
+    external: true
+    name: data

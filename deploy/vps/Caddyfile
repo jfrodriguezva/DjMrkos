@@ -1,4 +1,4 @@
-# Behind lawyer-nginx: nginx terminates TLS and forwards plain HTTP here, so Caddy only
+# Behind infra-caddy (~/infra): it terminates TLS and forwards plain HTTP here, so this only
 # listens on :80 and never tries to get its own certificate.
 {
 	auto_https off

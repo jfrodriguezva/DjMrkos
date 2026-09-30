@@ -93,7 +93,7 @@ Sin esto configurado, la app funciona igual — simplemente no manda la alerta.
 
 Ver [deploy/README.md](deploy/README.md) — SQL Server + migrador + API + Caddy (frontend + reverse proxy con HTTPS automático), todo con `docker compose -f deploy/docker-compose.prod.yml`.
 
-Si el VPS ya tiene otro proyecto con su propio SQL Server y nginx (caso actual, junto a Lawyer), usa [deploy/vps-compartido/README.md](deploy/vps-compartido/README.md): solo agrega API + frontend + migrador y reutiliza la BD y el HTTPS existentes.
+En el VPS compartido (caso actual), SQL Server y el HTTPS son infraestructura común en `~/infra` (repo `vps-infra`) y DJ MrKos es solo su app: ver [deploy/vps/README.md](deploy/vps/README.md).
 
 ## Documentación
 
