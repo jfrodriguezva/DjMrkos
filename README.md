@@ -4,7 +4,7 @@ Portal web para DJ MrKos: catálogo de servicios **configurable** (Módulos → 
 
 - **Backend:** .NET 10 · Clean Architecture · Dapper · Polly · SignalR
 - **Frontend:** React 19 · Vite · TypeScript · React Query
-- **Base de datos:** PostgreSQL, versionada con DbUp (no EF Core migrations)
+- **Base de datos:** SQL Server, versionada con DbUp (no EF Core migrations)
 
 ## Estructura del repositorio
 
@@ -37,12 +37,12 @@ DjMrkos/
 docker compose up -d
 ```
 
-Levanta PostgreSQL en `localhost:5432` con las credenciales que ya están en `backend/src/DjMrkos.Api/appsettings.Development.json` (`djmrkos` / `djmrkos_dev`).
+Levanta SQL Server en `localhost:1433` con las credenciales que ya están en `backend/src/DjMrkos.Api/appsettings.Development.json` (usuario `sa`, ver `MSSQL_SA_PASSWORD` en `docker-compose.yml`).
 
 ### 2. Aplicar el esquema (DbUp)
 
 ```bash
-dotnet run --project backend/src/DjMrkos.Migrator -- "Host=localhost;Port=5432;Database=djmrkos;Username=djmrkos;Password=djmrkos_dev"
+dotnet run --project backend/src/DjMrkos.Migrator -- "Server=localhost,1433;Database=djmrkos;User Id=sa;Password=djmrkos_dev_P@ss1;TrustServerCertificate=True"
 ```
 
 Esto crea las tablas y siembra el catálogo real del negocio: 7 módulos y 44 servicios con precio (Personal y Staff, Cabina, Iluminación, Efectos Especiales, Pantallas y Proyección, Audio Profesional, Personajes y Shows).
@@ -79,9 +79,26 @@ Corre en `http://localhost:5173` y hace proxy de `/api` y `/hubs` hacia el backe
 3. Ve a `/contratar`: verás el mismo presupuesto y fecha, listos para confirmar.
 4. En el panel admin, pestaña **Cotizaciones**, la solicitud aparece etiquetada **Contratación**, **Cotización** o **Agendar** según de dónde vino.
 
+## Alerta al DJ por nueva solicitud de canción (opcional, gratis)
+
+El panel admin ya muestra las solicitudes en tiempo real vía SignalR, pero eso solo sirve si el panel está abierto. Para recibir un aviso en el celular aunque el panel esté cerrado:
+
+1. Habla con [@BotFather](https://t.me/BotFather) en Telegram, crea un bot con `/newbot` y copia el token que te da.
+2. Escríbele un mensaje a tu bot nuevo (cualquier cosa) y abre `https://api.telegram.org/bot<TU_TOKEN>/getUpdates` en el navegador — ahí aparece tu `chat.id`.
+3. Pon ambos valores en `Telegram:BotToken` y `Telegram:ChatId` en `appsettings.Development.json` (o como variables de entorno en producción).
+
+Sin esto configurado, la app funciona igual — simplemente no manda la alerta.
+
+## Despliegue en producción (VPS, todo en Docker)
+
+Ver [deploy/README.md](deploy/README.md) — SQL Server + migrador + API + Caddy (frontend + reverse proxy con HTTPS automático), todo con `docker compose -f deploy/docker-compose.prod.yml`.
+
+Si el VPS ya tiene otro proyecto con su propio SQL Server y nginx (caso actual, junto a Lawyer), usa [deploy/vps-compartido/README.md](deploy/vps-compartido/README.md): solo agrega API + frontend + migrador y reutiliza la BD y el HTTPS existentes.
+
 ## Documentación
 
 - [Arquitectura](docs/ARCHITECTURE.md) — capas, resiliencia con Polly, seguridad del QR, auth admin
 - [API](docs/API.md) — referencia de endpoints
 - [Base de datos](docs/DATABASE.md) — esquema, migraciones, decisiones de modelado
 - [Frontend](docs/FRONTEND.md) — sistema de diseño, estructura, tiempo real
+- [Despliegue](deploy/README.md) — VPS, Docker, HTTPS

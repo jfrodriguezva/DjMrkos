@@ -19,7 +19,7 @@ public sealed class ModuleRepository(IResilientDbExecutor db) : IModuleRepositor
         db.QueryAsync(async (connection, token) =>
         {
             var sql = onlyActive
-                ? "SELECT * FROM modules WHERE is_active = TRUE ORDER BY display_order"
+                ? "SELECT * FROM modules WHERE is_active = 1 ORDER BY display_order"
                 : "SELECT * FROM modules ORDER BY display_order";
             var rows = await connection.QueryAsync<ModuleRow>(new CommandDefinition(sql, cancellationToken: token));
             return (IReadOnlyList<Module>)rows.Select(r => r.ToEntity()).ToList();

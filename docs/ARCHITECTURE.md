@@ -17,9 +17,9 @@ Un `ValidationBehavior<TRequest,TResponse>` (pipeline de MediatR) corre todos lo
 
 ## Resiliencia con Polly
 
-Todo acceso a PostgreSQL pasa por `IResilientDbExecutor` (`Infrastructure/Persistence/ResilientDbExecutor.cs`), que envuelve cada llamada de Dapper en un pipeline de Polly v8 compuesto, de afuera hacia adentro:
+Todo acceso a SQL Server pasa por `IResilientDbExecutor` (`Infrastructure/Persistence/ResilientDbExecutor.cs`), que envuelve cada llamada de Dapper en un pipeline de Polly v8 compuesto, de afuera hacia adentro:
 
-1. **Retry** — hasta 3 intentos con backoff exponencial y jitter, solo para `NpgsqlException` marcadas como transitorias (`ex.IsTransient`). Un error de SQL mal escrito o una violación de constraint **no** se reintenta.
+1. **Retry** — hasta 3 intentos con backoff exponencial y jitter, solo para `SqlException` cuyo número de error está en la lista de códigos transitorios conocidos (`ResilientDbExecutor.TransientErrorNumbers` — conexión caída, deadlock víctima, throttling de Azure SQL). A diferencia de Npgsql, `SqlException` no trae un flag `IsTransient` propio, así que esa lista es la fuente de verdad. Un error de SQL mal escrito o una violación de constraint **no** se reintenta.
 2. **Circuit breaker** — se abre tras una ráfaga de fallos (≥50% de fallos con un mínimo de 8 llamadas en 30s) y lo mantiene abierto 15s, para que una base de datos caída falle rápido en vez de acumular timeouts.
 3. **Timeout** — 5 segundos por intento individual.
 
@@ -36,13 +36,17 @@ Esto no es decorativo: bajar la base de datos localmente y pegarle a `/api/menu`
 
 `SongRequestHub` (SignalR) agrupa las conexiones por evento (`event:{eventId}`). El panel admin se une al grupo del evento que está viendo; los invitados **nunca** se conectan al hub — solo hacen `POST` HTTP. Cuando se crea o actualiza una solicitud, `SignalRSongRequestNotifier` (que implementa `ISongRequestNotifier`, el puerto que define Application) transmite el evento a ese grupo.
 
+## Alerta al DJ (fuera del panel)
+
+SignalR solo le sirve al DJ si tiene el panel abierto en pantalla — en un evento real, no siempre es el caso. `CreateSongRequestCommandHandler` también llama a `IDjAlertNotifier`, cuyo puerto vive en Application e Infrastructure implementa con `TelegramDjAlertNotifier`: un mensaje de Telegram al bot que el DJ configuró, gratis y sin infraestructura extra (solo un token de `@BotFather` y el `chat_id` del DJ en `Telegram:BotToken`/`Telegram:ChatId`). Si no está configurado, es un no-op silencioso — la solicitud del invitado nunca falla por esto, ni siquiera si Telegram está caído (el notifier atrapa cualquier excepción y solo deja un log de advertencia).
+
 ## Autenticación del panel admin
 
 v1 usa una única API key compartida (`ApiKeyAuthenticationHandler`, header `X-Api-Key`), comparada en tiempo constante. Es una decisión deliberada: el DJ es el único administrador. **Antes de agregar un segundo admin**, esto debe migrarse a JWT + una tabla de usuarios (o un proveedor como Entra ID/Auth0) — la interfaz de autenticación ya está aislada en un solo archivo (`Security/ApiKeyAuthenticationHandler.cs`) para que ese cambio no toque el resto de la API.
 
 ## Por qué Dapper (y no EF Core)
 
-El modelo de datos de este dominio es deliberadamente simple (seis tablas, relaciones poco profundas) y el valor está en controlar exactamente el SQL que corre en el flujo de mayor tráfico (crear una solicitud de canción durante un evento en vivo). Dapper da ese control sin el overhead de un `DbContext` y su *change tracking*. El costo que normalmente se paga por eso — migraciones — se cubre con **DbUp** (`DjMrkos.Migrator`), que aplica scripts SQL numerados una sola vez cada uno. Ver [DATABASE.md](DATABASE.md).
+El modelo de datos de este dominio es deliberadamente simple (seis tablas, relaciones poco profundas) y el valor está en controlar exactamente el SQL que corre en el flujo de mayor tráfico (crear una solicitud de canción durante un evento en vivo). Dapper da ese control sin el overhead de un `DbContext` y su *change tracking*. El costo que normalmente se paga por eso — migraciones — se cubre con **DbUp** (`DjMrkos.Migrator`), que aplica scripts T-SQL numerados una sola vez cada uno contra SQL Server. Ver [DATABASE.md](DATABASE.md).
 
 ## Por qué Minimal API (y no controladores)
 

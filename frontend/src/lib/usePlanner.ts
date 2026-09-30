@@ -12,10 +12,11 @@ interface PlannerState {
   cart: CartLine[]
   guestCount: number
   preferredDate: string | null // YYYY-MM-DD
+  preferredTime: string | null // HH:mm
 }
 
 const STORAGE_KEY = 'djmrkos.planner'
-const DEFAULT_STATE: PlannerState = { cart: [], guestCount: 100, preferredDate: null }
+const DEFAULT_STATE: PlannerState = { cart: [], guestCount: 100, preferredDate: null, preferredTime: null }
 
 const MIN_GUESTS = 10
 const MAX_GUESTS = 2000
@@ -84,9 +85,13 @@ export function usePlanner() {
     setState((prev) => ({ ...prev, preferredDate }))
   }, [])
 
+  const setPreferredTime = useCallback((preferredTime: string | null) => {
+    setState((prev) => ({ ...prev, preferredTime }))
+  }, [])
+
   const clearCart = useCallback(() => {
     setState((prev) => ({ ...prev, cart: [] }))
   }, [])
 
-  return { ...state, addItem, changeQty, removeItem, setGuestCount, setPreferredDate, clearCart }
+  return { ...state, addItem, changeQty, removeItem, setGuestCount, setPreferredDate, setPreferredTime, clearCart }
 }

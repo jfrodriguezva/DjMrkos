@@ -1,6 +1,6 @@
 # Base de datos
 
-PostgreSQL. Sin ORM de por medio — el esquema vive en SQL plano en `backend/src/DjMrkos.Migrator/Scripts/`, aplicado por **DbUp** (no hay migraciones de EF Core; ver [ARCHITECTURE.md](ARCHITECTURE.md#por-qué-dapper-y-no-ef-core)).
+SQL Server. Sin ORM de por medio — el esquema vive en SQL plano en `backend/src/DjMrkos.Migrator/Scripts/`, aplicado por **DbUp** (no hay migraciones de EF Core; ver [ARCHITECTURE.md](ARCHITECTURE.md#por-qué-dapper-y-no-ef-core)).
 
 ## Tablas
 
@@ -9,62 +9,72 @@ erDiagram
     modules ||--o{ categories : "tiene"
     events ||--o{ song_requests : "recibe"
     events ||--o{ testimonials : "opcional"
+    modules ||--o{ promotions : "opcional"
+    categories ||--o{ promotions : "opcional"
 
     modules {
-        uuid id PK
-        text name
-        text slug
-        text icon
+        uniqueidentifier id PK
+        nvarchar name
+        nvarchar slug
+        nvarchar icon
         int display_order
-        bool is_active
+        bit is_active
     }
     categories {
-        uuid id PK
-        uuid module_id FK
-        text name
-        text slug
-        text description
-        text image_url
+        uniqueidentifier id PK
+        uniqueidentifier module_id FK
+        nvarchar name
+        nvarchar slug
+        nvarchar description
+        nvarchar image_url
         numeric price "nullable — null = incluido/a cotizar"
         int display_order
-        bool is_active
+        bit is_active
     }
     events {
-        uuid id PK
-        text client_name
-        text location
-        timestamptz event_date_utc
+        uniqueidentifier id PK
+        nvarchar client_name
+        nvarchar location
+        datetimeoffset event_date_utc
         int status
-        text qr_token UK
-        timestamptz qr_valid_from_utc
-        timestamptz qr_valid_until_utc
+        nvarchar qr_token UK
+        datetimeoffset qr_valid_from_utc
+        datetimeoffset qr_valid_until_utc
     }
     song_requests {
-        uuid id PK
-        uuid event_id FK
-        text song_title
-        text artist
-        text requester_name
-        text dedication
-        text requester_fingerprint
+        uniqueidentifier id PK
+        uniqueidentifier event_id FK
+        nvarchar song_title
+        nvarchar artist
+        nvarchar requester_name
+        nvarchar dedication
+        nvarchar requester_fingerprint
         int status
     }
     testimonials {
-        uuid id PK
-        text client_name
-        uuid event_id FK
+        uniqueidentifier id PK
+        nvarchar client_name
+        uniqueidentifier event_id FK
         int rating
-        text comment
-        bool is_approved
+        nvarchar comment
+        bit is_approved
     }
     leads {
-        uuid id PK
-        text name
-        text email
-        text phone
+        uniqueidentifier id PK
+        nvarchar name
+        nvarchar email
+        nvarchar phone
         date event_date
-        text message
+        nvarchar message
         int status
+    }
+    promotions {
+        uniqueidentifier id PK
+        uniqueidentifier module_id FK "nullable — exactamente uno de module_id/category_id"
+        uniqueidentifier category_id FK "nullable"
+        nvarchar label
+        numeric discount_percentage
+        bit is_active
     }
 ```
 
@@ -78,6 +88,7 @@ Columnas en `snake_case` — Dapper las mapea a las propiedades `PascalCase` de 
 - **`song_requests.requester_fingerprint`** no es un dato personal — es un hash SHA-256 de IP + User-Agent, usado únicamente por el limitador de tasa (`ix_song_requests_rate_limit`). No hay forma de revertirlo a una identidad.
 - **`categories.price`** es nullable a propósito: `NULL` significa "va incluido al contratar el módulo, no es un artículo independiente" (p. ej. los géneros musicales del DJ), mientras que un valor es el precio "desde" que el cotizador del frontend usa para armar el presupuesto — ver [FRONTEND.md](FRONTEND.md#cotizador-tipo-carrito).
 - **Índices** pensados para las dos consultas calientes: el menú público (`ix_modules_active_order`, `ix_categories_module_active_order`) y la cola en vivo de un evento (`ix_song_requests_event`).
+- **`promotions`** solo puede apuntar a un módulo completo o a una categoría, nunca a ambos ni a ninguno — reforzado tanto por `Promotion.Create` en el dominio como por el `CHECK ck_promotions_exactly_one_target` en la base, así que un dato corrupto no puede colarse ni siquiera por un `INSERT` manual.
 
 ## Nota de compatibilidad con Dapper
 
@@ -86,7 +97,7 @@ Los repositorios mapean cada fila a un `record` con **solo propiedades `init`** 
 ## Aplicar el esquema
 
 ```bash
-dotnet run --project backend/src/DjMrkos.Migrator -- "Host=localhost;Port=5432;Database=djmrkos;Username=djmrkos;Password=djmrkos_dev"
+dotnet run --project backend/src/DjMrkos.Migrator -- "Server=localhost,1433;Database=djmrkos;User Id=sa;Password=djmrkos_dev_P@ss1;TrustServerCertificate=True"
 ```
 
 `0001_InitialSchema.sql` crea las tablas. `0002_SeedMenu.sql` y `0003_CategoryPricingAndEntertainment.sql` sembraron un catálogo de ejemplo inicial; `0004_FullServiceCatalog.sql` lo **reemplaza por completo** con el catálogo real del negocio — 7 módulos y 44 categorías con precio (Personal y Staff, Cabina, Iluminación, Efectos Especiales, Pantallas y Proyección, Audio Profesional, Personajes y Shows). Es seguro vaciar y repoblar `modules`/`categories` en una sola migración porque ninguna otra tabla las referencia por clave foránea.

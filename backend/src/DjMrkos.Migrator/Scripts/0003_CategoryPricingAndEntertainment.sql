@@ -2,7 +2,7 @@
 -- módulo de personajes/shows — botargas, robot y Pajara Peggy son artículos reales que se
 -- arrastran al presupuesto igual que una torre de luces.
 
-ALTER TABLE categories ADD COLUMN price NUMERIC(10, 2) NULL;
+ALTER TABLE categories ADD price NUMERIC(10, 2) NULL;
 
 -- "Desde" precio en MXN. NULL = va incluido al contratar el módulo (p. ej. la música del DJ),
 -- no es un artículo independiente que se pueda agregar al carrito.
@@ -18,12 +18,12 @@ UPDATE categories SET price = 2200.00 WHERE id = '22222222-0000-0000-0000-000000
 UPDATE categories SET price = 350.00  WHERE id = '22222222-0000-0000-0000-00000000000a'; -- Micrófonos
 
 INSERT INTO modules (id, name, slug, icon, display_order, is_active) VALUES
-    ('11111111-0000-0000-0000-000000000005', 'Personajes y Shows', 'personajes-y-shows', 'sparkles', 4, TRUE);
+    ('11111111-0000-0000-0000-000000000005', 'Personajes y Shows', 'personajes-y-shows', 'sparkles', 4, 1);
 
 INSERT INTO categories (id, module_id, name, slug, description, price, display_order, is_active) VALUES
     ('22222222-0000-0000-0000-00000000000b', '11111111-0000-0000-0000-000000000005', 'Botargas',
-        'botargas', 'Personajes infantiles y de caricatura para animar la fiesta — por botarga.', 950.00, 0, TRUE),
+        'botargas', 'Personajes infantiles y de caricatura para animar la fiesta — por botarga.', 950.00, 0, 1),
     ('22222222-0000-0000-0000-00000000000c', '11111111-0000-0000-0000-000000000005', 'Robot de luces',
-        'robot-de-luces', 'Robot LED de gran altura que baila e interactúa con los invitados.', 1900.00, 1, TRUE),
+        'robot-de-luces', 'Robot LED de gran altura que baila e interactúa con los invitados.', 1900.00, 1, 1),
     ('22222222-0000-0000-0000-00000000000d', '11111111-0000-0000-0000-000000000005', 'Pajara Peggy',
-        'pajara-peggy', 'El clásico personaje de avestruz que hace bailar a grandes y chicos.', 950.00, 2, TRUE);
+        'pajara-peggy', 'El clásico personaje de avestruz que hace bailar a grandes y chicos.', 950.00, 2, 1);

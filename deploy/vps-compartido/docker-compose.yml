@@ -1,0 +1,68 @@
+# DJ MrKos on a VPS that already runs another Compose project (Lawyer) with its own SQL
+# Server and nginx + certbot on ports 80/443. This stack adds NO database and publishes NO
+# ports: it joins Lawyer's Docker network, uses lawyer-sqlserver-1 with its own login, and
+# lawyer-nginx terminates TLS and proxies the DJ MrKos domain to mrkos-web.
+#
+# Layout on the VPS (see README.md next to this file):
+#
+#   ~/Mrkos/
+#     docker-compose.yml   <- copy of this file
+#     .env                 <- copy of .env.example, with the real secrets
+#     DjMrkos/             <- git clone of the repo
+#
+# Run from ~/Mrkos:  docker compose up -d --build
+#
+# Every service has an mrkos- prefixed name on purpose: on the shared network, a service
+# called "api" would answer to the same DNS name as Lawyer's own "api" service and nginx
+# could end up sending ECAbogados traffic here.
+
+name: mrkos
+
+services:
+  mrkos-migrator:
+    build:
+      context: ./DjMrkos/backend
+      dockerfile: src/DjMrkos.Migrator/Dockerfile
+    container_name: mrkos-migrator
+    command: ["Server=${SQL_HOST},1433;Database=djmrkos;User Id=${DB_USER};Password=${DB_PASSWORD};TrustServerCertificate=True"]
+    restart: "no"
+    networks: [shared]
+
+  mrkos-api:
+    build:
+      context: ./DjMrkos/backend
+      dockerfile: src/DjMrkos.Api/Dockerfile
+    container_name: mrkos-api
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      Database__ConnectionString: "Server=${SQL_HOST},1433;Database=djmrkos;User Id=${DB_USER};Password=${DB_PASSWORD};TrustServerCertificate=True"
+      Qr__SigningKey: ${QR_SIGNING_KEY}
+      Admin__ApiKey: ${ADMIN_API_KEY}
+      Telegram__BotToken: ${TELEGRAM_BOT_TOKEN:-}
+      Telegram__ChatId: ${TELEGRAM_CHAT_ID:-}
+      Frontend__PublicBaseUrl: https://${DOMAIN}
+      Frontend__AllowedOrigins__0: https://${DOMAIN}
+    depends_on:
+      mrkos-migrator:
+        condition: service_completed_successfully
+    networks: [shared]
+
+  mrkos-web:
+    build:
+      context: ./DjMrkos/frontend
+      dockerfile: Dockerfile
+    container_name: mrkos-web
+    restart: unless-stopped
+    volumes:
+      # Plain-HTTP Caddyfile: lawyer-nginx already handles HTTPS for this domain.
+      - ./DjMrkos/deploy/vps-compartido/Caddyfile:/etc/caddy/Caddyfile:ro
+    depends_on:
+      mrkos-api:
+        condition: service_healthy
+    networks: [shared]
+
+networks:
+  shared:
+    external: true
+    name: ${LAWYER_NETWORK}

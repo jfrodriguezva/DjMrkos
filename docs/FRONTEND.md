@@ -68,4 +68,6 @@ Las solicitudes se muestran en cuatro columnas tipo kanban (Pendientes / En cola
 
 ## Supuesto de despliegue
 
-El cliente llama rutas relativas (`/api/...`, `/hubs/...`) — en desarrollo, Vite las reenvía al backend (`vite.config.ts`); en producción se asume que el frontend se sirve **detrás del mismo dominio/reverse proxy** que la API (Nginx, YARP, etc.), sin necesidad de configurar CORS ni una URL base por entorno. Si el frontend y la API van a vivir en dominios distintos, `apiClient.ts` es el único archivo que necesita una URL base configurable.
+El cliente llama rutas relativas (`/api/...`, `/hubs/...`) — en desarrollo, Vite las reenvía al backend (`vite.config.ts`); en producción se asume que el frontend se sirve **detrás del mismo dominio/reverse proxy** que la API, sin necesidad de configurar CORS ni una URL base por entorno. Si el frontend y la API van a vivir en dominios distintos, `apiClient.ts` es el único archivo que necesita una URL base configurable.
+
+El despliegue de referencia (ver [deploy/README.md](../deploy/README.md)) implementa exactamente ese supuesto con Caddy: sirve el build de `frontend/dist` y le hace reverse proxy a `/api/*` y `/hubs/*` bajo el mismo dominio (`frontend/Caddyfile`).

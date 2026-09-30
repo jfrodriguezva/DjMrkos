@@ -5,15 +5,17 @@ import { CatalogPanel } from './panels/CatalogPanel'
 import { EventsPanel } from './panels/EventsPanel'
 import { LeadsPanel } from './panels/LeadsPanel'
 import { LiveQueuePanel } from './panels/LiveQueuePanel'
+import { PromotionsPanel } from './panels/PromotionsPanel'
 import { TestimonialsPanel } from './panels/TestimonialsPanel'
 import styles from './AdminDashboardPage.module.css'
 
-type Tab = 'queue' | 'events' | 'catalog' | 'testimonials' | 'leads'
+type Tab = 'queue' | 'events' | 'catalog' | 'promotions' | 'testimonials' | 'leads'
 
 const TABS: { id: Tab; label: string }[] = [
   { id: 'queue', label: 'Cola en vivo' },
   { id: 'events', label: 'Eventos' },
   { id: 'catalog', label: 'Catálogo' },
+  { id: 'promotions', label: 'Promociones' },
   { id: 'testimonials', label: 'Testimonios' },
   { id: 'leads', label: 'Cotizaciones' },
 ]
@@ -60,6 +62,7 @@ export function AdminDashboardPage() {
           {tab === 'queue' && <LiveQueuePanel />}
           {tab === 'events' && <EventsPanel />}
           {tab === 'catalog' && <CatalogPanel />}
+          {tab === 'promotions' && <PromotionsPanel />}
           {tab === 'testimonials' && <TestimonialsPanel />}
           {tab === 'leads' && <LeadsPanel />}
         </div>

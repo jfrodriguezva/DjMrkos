@@ -7,6 +7,14 @@ namespace DjMrkos.Infrastructure.Repositories;
 
 public sealed class LeadRepository(IResilientDbExecutor db) : ILeadRepository
 {
+    public Task<Lead?> GetByIdAsync(Guid id, CancellationToken ct) =>
+        db.QueryAsync(async (connection, token) =>
+        {
+            const string sql = "SELECT * FROM leads WHERE id = @Id";
+            var row = await connection.QuerySingleOrDefaultAsync<LeadRow>(new CommandDefinition(sql, new { Id = id }, cancellationToken: token));
+            return row?.ToEntity();
+        }, ct);
+
     public Task<IReadOnlyList<Lead>> GetAllAsync(CancellationToken ct) =>
         db.QueryAsync(async (connection, token) =>
         {
@@ -28,6 +36,13 @@ public sealed class LeadRepository(IResilientDbExecutor db) : ILeadRepository
 
         return lead;
     }
+
+    public Task UpdateAsync(Lead lead, CancellationToken ct) =>
+        db.ExecuteAsync((connection, token) =>
+        {
+            const string sql = "UPDATE leads SET status = @Status WHERE id = @Id";
+            return connection.ExecuteAsync(new CommandDefinition(sql, LeadRow.FromEntity(lead), cancellationToken: token));
+        }, ct);
 
     /// <summary>See the remark on <c>ModuleRepository.ModuleRow</c> — init-only properties, no primary constructor.</summary>
     private sealed record LeadRow

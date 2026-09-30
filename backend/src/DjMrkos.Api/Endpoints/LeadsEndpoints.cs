@@ -21,5 +21,12 @@ public static class LeadsEndpoints
             Results.Ok(await sender.Send(new GetLeadsQuery(), ct)))
             .WithTags("Admin · Leads")
             .RequireAuthorization(ApiKeyAuthenticationHandler.SchemeName);
+
+        app.MapPost("/api/admin/leads/{id:guid}/confirm", async (Guid id, ConfirmLeadRequest body, ISender sender, CancellationToken ct) =>
+            Results.Ok(await sender.Send(new ConfirmLeadCommand(id, body.EventDateUtc, body.Location), ct)))
+            .WithTags("Admin · Leads")
+            .RequireAuthorization(ApiKeyAuthenticationHandler.SchemeName);
     }
+
+    public sealed record ConfirmLeadRequest(DateTimeOffset EventDateUtc, string? Location);
 }

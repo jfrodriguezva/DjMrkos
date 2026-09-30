@@ -20,13 +20,14 @@ public sealed class CreateSongRequestCommandHandlerTests
     private readonly IEventRepository _events = Substitute.For<IEventRepository>();
     private readonly ISongRequestRepository _songRequests = Substitute.For<ISongRequestRepository>();
     private readonly ISongRequestNotifier _notifier = Substitute.For<ISongRequestNotifier>();
+    private readonly IDjAlertNotifier _djAlerts = Substitute.For<IDjAlertNotifier>();
     private readonly IDateTimeProvider _clock = Substitute.For<IDateTimeProvider>();
     private readonly CreateSongRequestCommandHandler _sut;
 
     public CreateSongRequestCommandHandlerTests()
     {
         _clock.UtcNow.Returns(Now);
-        _sut = new CreateSongRequestCommandHandler(_events, _songRequests, _notifier, _clock);
+        _sut = new CreateSongRequestCommandHandler(_events, _songRequests, _notifier, _djAlerts, _clock);
     }
 
     [Fact]
@@ -83,5 +84,6 @@ public sealed class CreateSongRequestCommandHandlerTests
         Assert.Equal("La Bikina", result.SongTitle);
         Assert.Equal(SongRequestStatus.Pending, result.Status);
         await _notifier.Received(1).NotifyRequestCreatedAsync(liveEvent.Id, Arg.Any<Application.SongRequests.Dtos.SongRequestDto>(), Arg.Any<CancellationToken>());
+        await _djAlerts.Received(1).NotifyNewSongRequestAsync("La Bikina", "Luis Miguel", "Para mi abuela", Arg.Any<CancellationToken>());
     }
 }

@@ -1,0 +1,6 @@
+# Files that run or are read on the Linux VPS must keep LF endings even when committed
+# from Windows — a CRLF in deploy.sh breaks bash, and one in .env ends up inside secrets.
+*.sh        text eol=lf
+deploy/**   text eol=lf
+Caddyfile   text eol=lf
+Dockerfile  text eol=lf

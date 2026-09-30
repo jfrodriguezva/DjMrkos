@@ -7,6 +7,9 @@ export interface MenuCategory {
   description: string | null
   imageUrl: string | null
   price: number | null
+  originalPrice: number | null
+  discountPercentage: number | null
+  promotionLabel: string | null
 }
 
 export interface MenuModule {
@@ -98,6 +101,16 @@ export interface Lead {
   eventDate: string | null
   message: string
   status: LeadStatus
+  createdAtUtc: string
+}
+
+export interface PromotionAdmin {
+  id: string
+  moduleId: string | null
+  categoryId: string | null
+  label: string
+  discountPercentage: number
+  isActive: boolean
   createdAtUtc: string
 }
 

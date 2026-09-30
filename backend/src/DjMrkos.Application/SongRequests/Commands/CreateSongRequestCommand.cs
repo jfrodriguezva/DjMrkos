@@ -30,6 +30,7 @@ public sealed class CreateSongRequestCommandHandler(
     IEventRepository events,
     ISongRequestRepository songRequests,
     ISongRequestNotifier notifier,
+    IDjAlertNotifier djAlerts,
     IDateTimeProvider clock)
     : IRequestHandler<CreateSongRequestCommand, SongRequestDto>
 {
@@ -58,6 +59,7 @@ public sealed class CreateSongRequestCommandHandler(
         var dto = SongRequestDto.From(created);
 
         await notifier.NotifyRequestCreatedAsync(@event.Id, dto, cancellationToken);
+        await djAlerts.NotifyNewSongRequestAsync(request.SongTitle, request.Artist, request.RequesterName, cancellationToken);
 
         return dto;
     }

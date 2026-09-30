@@ -1,5 +1,6 @@
 using DjMrkos.Application.Common.Interfaces;
 using DjMrkos.Infrastructure.Common;
+using DjMrkos.Infrastructure.Notifications;
 using DjMrkos.Infrastructure.Persistence;
 using DjMrkos.Infrastructure.Qr;
 using DjMrkos.Infrastructure.Realtime;
@@ -13,7 +14,7 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        // Postgres uses snake_case columns; the app's C# models stay PascalCase. This one line
+        // The schema uses snake_case columns; the app's C# models stay PascalCase. This one line
         // is what lets every repository map `display_order` -> `DisplayOrder` for free.
         Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
 
@@ -23,8 +24,9 @@ public static class DependencyInjection
 
         services.Configure<DatabaseOptions>(configuration.GetSection(DatabaseOptions.SectionName));
         services.Configure<QrOptions>(configuration.GetSection(QrOptions.SectionName));
+        services.Configure<TelegramOptions>(configuration.GetSection(TelegramOptions.SectionName));
 
-        services.AddSingleton<IDbConnectionFactory, NpgsqlConnectionFactory>();
+        services.AddSingleton<IDbConnectionFactory, SqlConnectionFactory>();
         services.AddSingleton<IResilientDbExecutor, ResilientDbExecutor>();
 
         services.AddScoped<IModuleRepository, ModuleRepository>();
@@ -33,10 +35,12 @@ public static class DependencyInjection
         services.AddScoped<ISongRequestRepository, SongRequestRepository>();
         services.AddScoped<ITestimonialRepository, TestimonialRepository>();
         services.AddScoped<ILeadRepository, LeadRepository>();
+        services.AddScoped<IPromotionRepository, PromotionRepository>();
 
         services.AddSingleton<IDateTimeProvider, SystemDateTimeProvider>();
         services.AddSingleton<IQrTokenService, QrTokenService>();
         services.AddScoped<ISongRequestNotifier, SignalRSongRequestNotifier>();
+        services.AddHttpClient<IDjAlertNotifier, TelegramDjAlertNotifier>();
 
         services.AddSignalR();
 

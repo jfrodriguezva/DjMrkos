@@ -18,7 +18,7 @@ public sealed class TestimonialRepository(IResilientDbExecutor db) : ITestimonia
     public Task<IReadOnlyList<Testimonial>> GetApprovedAsync(CancellationToken ct) =>
         db.QueryAsync(async (connection, token) =>
         {
-            const string sql = "SELECT * FROM testimonials WHERE is_approved = TRUE ORDER BY created_at_utc DESC";
+            const string sql = "SELECT * FROM testimonials WHERE is_approved = 1 ORDER BY created_at_utc DESC";
             var rows = await connection.QueryAsync<TestimonialRow>(new CommandDefinition(sql, cancellationToken: token));
             return (IReadOnlyList<Testimonial>)rows.Select(r => r.ToEntity()).ToList();
         }, ct);

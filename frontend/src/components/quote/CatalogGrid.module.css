@@ -78,6 +78,13 @@
   font-style: italic;
 }
 
+.itemPriceStruck {
+  color: var(--text-muted);
+  text-decoration: line-through;
+  margin-right: 6px;
+  font-size: 12px;
+}
+
 .addBtn {
   width: 30px;
   height: 30px;

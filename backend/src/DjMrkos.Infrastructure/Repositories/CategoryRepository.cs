@@ -19,7 +19,7 @@ public sealed class CategoryRepository(IResilientDbExecutor db) : ICategoryRepos
         db.QueryAsync(async (connection, token) =>
         {
             var sql = onlyActive
-                ? "SELECT * FROM categories WHERE module_id = @ModuleId AND is_active = TRUE ORDER BY display_order"
+                ? "SELECT * FROM categories WHERE module_id = @ModuleId AND is_active = 1 ORDER BY display_order"
                 : "SELECT * FROM categories WHERE module_id = @ModuleId ORDER BY display_order";
             var rows = await connection.QueryAsync<CategoryRow>(new CommandDefinition(sql, new { ModuleId = moduleId }, cancellationToken: token));
             return (IReadOnlyList<Category>)rows.Select(r => r.ToEntity()).ToList();
@@ -28,7 +28,7 @@ public sealed class CategoryRepository(IResilientDbExecutor db) : ICategoryRepos
     public Task<IReadOnlyList<Category>> GetAllActiveAsync(CancellationToken ct) =>
         db.QueryAsync(async (connection, token) =>
         {
-            const string sql = "SELECT * FROM categories WHERE is_active = TRUE ORDER BY module_id, display_order";
+            const string sql = "SELECT * FROM categories WHERE is_active = 1 ORDER BY module_id, display_order";
             var rows = await connection.QueryAsync<CategoryRow>(new CommandDefinition(sql, cancellationToken: token));
             return (IReadOnlyList<Category>)rows.Select(r => r.ToEntity()).ToList();
         }, ct);

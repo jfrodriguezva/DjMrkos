@@ -21,6 +21,17 @@ Los endpoints bajo `/api/admin/*` requieren el header `X-Api-Key: <clave>` (ver 
 
 `price` viaja también en `GET /api/menu` (dentro de cada categoría) — es lo que alimenta el cotizador tipo carrito del frontend sin un endpoint aparte. Ver [FRONTEND.md](FRONTEND.md#cotizador-tipo-carrito).
 
+## Promociones
+
+| Método | Ruta | Descripción |
+|---|---|---|
+| GET | `/api/admin/promotions` | Todas las promociones, activas e inactivas. |
+| POST | `/api/admin/promotions` | Crea una promoción. Body: `{ moduleId?, categoryId?, label, discountPercentage }` — exactamente uno de `moduleId`/`categoryId`, nunca ambos ni ninguno. |
+| PUT | `/api/admin/promotions/{id}` | Actualiza nombre, descuento y estado activo. |
+| DELETE | `/api/admin/promotions/{id}` | Desactiva la promoción (soft delete). |
+
+Una promoción activa se refleja automáticamente en `GET /api/menu`: cada categoría con `price` bajo el módulo o la categoría promocionada trae `price` ya descontado, más `originalPrice`, `discountPercentage` y `promotionLabel` para que el frontend muestre el precio tachado y el badge. Una promoción de categoría tiene prioridad sobre una de módulo para esa misma categoría.
+
 ## Eventos y QR
 
 | Método | Ruta | Descripción |
@@ -55,6 +66,7 @@ Cada creación/actualización también se transmite por SignalR — ver [FRONTEN
 |---|---|---|
 | POST | `/api/leads` | Público — el formulario de contacto. Body: `{ name, email, phone?, eventDate?, message }`. |
 | GET | `/api/admin/leads` | Listado completo, más recientes primero. |
+| POST | `/api/admin/leads/{id}/confirm` | Confirma la cita: crea un `Event` (el mismo que usa el flujo de QR) con la fecha/hora y lugar dados, y marca el lead como `Won`. Responde `{ lead, event }`. El evento creado aparece de inmediato en `GET /api/admin/events` — es el calendario interno. |
 
 ## Errores
 

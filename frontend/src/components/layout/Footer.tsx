@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { CONTACT, whatsappHref } from '../../lib/contact'
 import styles from './Footer.module.css'
 
 export function Footer() {
@@ -29,6 +30,17 @@ export function Footer() {
               <Link to="/agendar">Agendar</Link>
               <Link to="/cotizador">Cotizar</Link>
               <Link to="/contratar">Contratar</Link>
+            </div>
+          </div>
+
+          <div>
+            <div className={styles.heading}>Contacto directo</div>
+            <div className={styles.links}>
+              <a href={whatsappHref('Hola, quiero cotizar un evento con DJ MrKos')} target="_blank" rel="noreferrer">
+                WhatsApp
+              </a>
+              <a href={CONTACT.phoneHref}>Llamar · {CONTACT.phoneDisplay}</a>
+              <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
             </div>
           </div>
         </div>

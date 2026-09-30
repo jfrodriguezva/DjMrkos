@@ -5,6 +5,7 @@ using DjMrkos.Application;
 using DjMrkos.Infrastructure;
 using DjMrkos.Infrastructure.Realtime;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -59,6 +60,18 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
+// In production the API sits behind Caddy (TLS termination + reverse proxy) in the same
+// Docker network — Caddy is never on loopback, so the default KnownNetworks/KnownProxies
+// restriction would silently ignore its X-Forwarded-* headers. Without this, the app always
+// sees plain-HTTP requests and UseHttpsRedirection below would redirect every single API call.
+var forwardedHeadersOptions = new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
+};
+forwardedHeadersOptions.KnownIPNetworks.Clear();
+forwardedHeadersOptions.KnownProxies.Clear();
+app.UseForwardedHeaders(forwardedHeadersOptions);
+
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 if (app.Environment.IsDevelopment())
@@ -82,6 +95,7 @@ app.MapEventsEndpoints();
 app.MapSongRequestsEndpoints();
 app.MapTestimonialsEndpoints();
 app.MapLeadsEndpoints();
+app.MapPromotionsEndpoints();
 
 app.MapHub<SongRequestHub>("/hubs/song-requests");
 

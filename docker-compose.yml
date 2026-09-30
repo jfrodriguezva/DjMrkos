@@ -1,20 +1,20 @@
 services:
-  postgres:
-    image: postgres:16-alpine
-    container_name: djmrkos-postgres
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: djmrkos-sqlserver
     environment:
-      POSTGRES_DB: djmrkos
-      POSTGRES_USER: djmrkos
-      POSTGRES_PASSWORD: djmrkos_dev
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: djmrkos_dev_P@ss1
+      MSSQL_PID: Express
     ports:
-      - "5432:5432"
+      - "1433:1433"
     volumes:
-      - djmrkos-postgres-data:/var/lib/postgresql/data
+      - djmrkos-sqlserver-data:/var/opt/mssql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U djmrkos -d djmrkos"]
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -Q 'SELECT 1' || exit 1"]
       interval: 5s
       timeout: 5s
       retries: 10
 
 volumes:
-  djmrkos-postgres-data:
+  djmrkos-sqlserver-data:

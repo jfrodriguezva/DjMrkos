@@ -1,0 +1,21 @@
+{$DOMAIN} {
+	root * /usr/share/caddy
+	encode gzip
+
+	# Same-origin API + SignalR hub — this is the "reverse proxy assumption" docs/FRONTEND.md
+	# and docs/ARCHITECTURE.md are built around: the browser never needs CORS or a base URL,
+	# apiClient.ts and signalr.ts already call relative /api and /hubs paths.
+	handle /api/* {
+		reverse_proxy api:8080
+	}
+	handle /hubs/* {
+		reverse_proxy api:8080
+	}
+
+	# SPA fallback: any other path that isn't a real static file serves index.html so
+	# React Router can handle client-side routes like /cotizador or /admin on a hard refresh.
+	handle {
+		try_files {path} /index.html
+		file_server
+	}
+}

@@ -4,7 +4,7 @@ using DbUp;
 // this small console app applies numbered SQL scripts (embedded from Scripts/) with DbUp.
 // Run it once against a fresh database, and again after every deploy that adds a script.
 //
-// Usage: dotnet run --project src/DjMrkos.Migrator -- "Host=localhost;Database=djmrkos;Username=djmrkos;Password=..."
+// Usage: dotnet run --project src/DjMrkos.Migrator -- "Server=localhost,1433;Database=djmrkos;User Id=sa;Password=...;TrustServerCertificate=True"
 
 var connectionString = args.Length > 0
     ? args[0]
@@ -12,10 +12,10 @@ var connectionString = args.Length > 0
       ?? throw new InvalidOperationException(
           "Pasa la cadena de conexión como argumento o define DJMRKOS_CONNECTION_STRING.");
 
-EnsureDatabase.For.PostgresqlDatabase(connectionString);
+EnsureDatabase.For.SqlDatabase(connectionString);
 
 var upgrader = DeployChanges.To
-    .PostgresqlDatabase(connectionString)
+    .SqlDatabase(connectionString)
     .WithScriptsEmbeddedInAssembly(typeof(Program).Assembly)
     .LogToConsole()
     .Build();

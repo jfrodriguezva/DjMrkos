@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '../components/ui/Button'
 import { ApiError, api } from '../lib/apiClient'
+import { CONTACT, whatsappHref } from '../lib/contact'
 import type { ApiProblem, Lead } from '../types/api'
 import styles from './ContactPage.module.css'
 
@@ -55,6 +56,18 @@ export function ContactPage() {
                 <div className="label">Cobertura</div>
                 <div className="value">Bodas · XV años · Corporativos · Fiestas privadas</div>
               </div>
+            </div>
+
+            <div className={styles.directChannels}>
+              <a className="btn btn--ghost" href={whatsappHref('Hola, quiero cotizar un evento con DJ MrKos')} target="_blank" rel="noreferrer">
+                WhatsApp
+              </a>
+              <a className="btn btn--ghost" href={CONTACT.phoneHref}>
+                Llamar · {CONTACT.phoneDisplay}
+              </a>
+              <a className="btn btn--ghost" href={`mailto:${CONTACT.email}`}>
+                {CONTACT.email}
+              </a>
             </div>
           </div>
 

@@ -53,8 +53,12 @@ export function CatalogGrid({ modules, onAdd }: CatalogGridProps) {
                   >
                     <span className={styles.itemName}>{c.name}</span>
                     {c.description && <span className={styles.itemDesc}>{c.description}</span>}
+                    {c.originalPrice !== null && (
+                      <span className="badge badge--live">-{c.discountPercentage}% {c.promotionLabel}</span>
+                    )}
                     <div className={styles.itemFooter}>
                       <span className={`${styles.itemPrice} ${c.price === null ? styles.itemPriceIncluded : ''}`}>
+                        {c.originalPrice !== null && <span className={styles.itemPriceStruck}>{formatMxn(c.originalPrice)}</span>}
                         {c.price !== null ? `Desde ${formatMxn(c.price)}` : 'Incluido / a cotizar'}
                       </span>
                       <button type="button" className={styles.addBtn} onClick={() => onAdd(payload)} aria-label={`Agregar ${c.name} al presupuesto`}>

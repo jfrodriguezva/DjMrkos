@@ -11,14 +11,20 @@ import { usePlanner } from '../lib/usePlanner'
 import type { ApiProblem, Lead, MenuModule } from '../types/api'
 import styles from './HirePage.module.css'
 
+const TIME_SLOTS = ['12:00', '14:00', '16:00', '18:00', '20:00', '22:00']
+
 /**
  * The commitment step of the funnel: Cotizar explores prices, Agendar checks a date,
  * Contratar reviews both together and submits a firm booking request — tagged distinctly in
- * the lead message so the admin's Cotizaciones tab can tell a browse from a real ask.
+ * the lead message so the admin's Cotizaciones tab can tell a browse from a real ask. Picking a
+ * date + time slot here is what turns the cart into an actual appointment proposal: the admin
+ * sees it in Cotizaciones and, on confirming, it becomes a real entry in the internal calendar.
  */
 export function HirePage() {
   const { data: modules, isLoading } = useQuery({ queryKey: ['menu'], queryFn: () => api.get<MenuModule[]>('/menu') })
+  const { data: busyDates } = useQuery({ queryKey: ['availability'], queryFn: () => api.get<string[]>('/availability') })
   const planner = usePlanner()
+  const isDateBusy = !!planner.preferredDate && (busyDates ?? []).includes(planner.preferredDate)
 
   // Starts hidden behind the empty notice below when the cart is empty — revealed by "agrégalos
   // aquí mismo". (If the cart already has items this state is never consulted: the grid always
@@ -40,10 +46,12 @@ export function HirePage() {
       planner.cart.length > 0 ? `Servicios:\n${lines.join('\n')}` : 'Sin servicios seleccionados — contratación a definir en la llamada.',
       `Invitados estimados: ${planner.guestCount}`,
       `Total estimado: ${formatMxn(total)}`,
-      planner.preferredDate ? `Fecha solicitada: ${planner.preferredDate}` : 'Fecha por confirmar.',
+      planner.preferredDate
+        ? `Cita propuesta: ${planner.preferredDate}${planner.preferredTime ? ` a las ${planner.preferredTime}` : ''}`
+        : 'Fecha y hora por confirmar.',
     ]
     return parts.join('\n\n')
-  }, [planner.cart, planner.guestCount, planner.preferredDate, total])
+  }, [planner.cart, planner.guestCount, planner.preferredDate, planner.preferredTime, total])
 
   const submit = useMutation({
     mutationFn: () =>
@@ -76,9 +84,14 @@ export function HirePage() {
         <div className={`card ${styles.summaryCard}`}>
           <h2>Resumen</h2>
           <div className={styles.summaryRow}>
-            <span className={styles.summaryLabel}>Fecha del evento</span>
-            <span className={styles.summaryValue}>{planner.preferredDate ?? 'Por confirmar'}</span>
+            <span className={styles.summaryLabel}>Cita propuesta</span>
+            <span className={styles.summaryValue}>
+              {planner.preferredDate ? `${planner.preferredDate}${planner.preferredTime ? ` · ${planner.preferredTime}` : ''}` : 'Por confirmar'}
+            </span>
           </div>
+          {isDateBusy && (
+            <p className="field-error">Esa fecha ya tiene un evento confirmado — puedes proponerla igual y te avisamos si no es posible, o elige otra en Agendar.</p>
+          )}
           <div className={styles.summaryRow}>
             <span className={styles.summaryLabel}>Invitados estimados</span>
             <span className={styles.summaryValue}>{planner.guestCount}</span>
@@ -124,14 +137,27 @@ export function HirePage() {
                     submit.mutate()
                   }}
                 >
-                  <div className="field">
-                    <label htmlFor="hireDate">Fecha del evento</label>
-                    <input
-                      id="hireDate"
-                      type="date"
-                      value={planner.preferredDate ?? ''}
-                      onChange={(e) => planner.setPreferredDate(e.target.value || null)}
-                    />
+                  <div style={{ display: 'flex', gap: 12 }}>
+                    <div className="field" style={{ flex: 1 }}>
+                      <label htmlFor="hireDate">Fecha propuesta</label>
+                      <input
+                        id="hireDate"
+                        type="date"
+                        value={planner.preferredDate ?? ''}
+                        onChange={(e) => planner.setPreferredDate(e.target.value || null)}
+                      />
+                    </div>
+                    <div className="field" style={{ flex: 1 }}>
+                      <label htmlFor="hireTime">Hora propuesta</label>
+                      <select id="hireTime" value={planner.preferredTime ?? ''} onChange={(e) => planner.setPreferredTime(e.target.value || null)}>
+                        <option value="">Por confirmar</option>
+                        {TIME_SLOTS.map((t) => (
+                          <option key={t} value={t}>
+                            {t}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
                   <div className="field">
                     <label htmlFor="hireName">Nombre</label>

@@ -1,0 +1,28 @@
+# Behind lawyer-nginx: nginx terminates TLS and forwards plain HTTP here, so Caddy only
+# listens on :80 and never tries to get its own certificate.
+{
+	auto_https off
+	servers {
+		# Keep nginx's X-Forwarded-Proto: https instead of overwriting it with http —
+		# otherwise the API's UseHttpsRedirection would redirect every /api call in a loop.
+		trusted_proxies static private_ranges
+	}
+}
+
+:80 {
+	root * /usr/share/caddy
+	encode gzip
+
+	handle /api/* {
+		reverse_proxy mrkos-api:8080
+	}
+	handle /hubs/* {
+		reverse_proxy mrkos-api:8080
+	}
+
+	# SPA fallback so React Router routes survive a hard refresh.
+	handle {
+		try_files {path} /index.html
+		file_server
+	}
+}
