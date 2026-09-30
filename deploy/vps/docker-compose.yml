@@ -1,7 +1,7 @@
 # DJ MrKos on the shared VPS: ONLY the app. SQL Server and the HTTPS proxy (Caddy, owner
 # of 80/443) are shared infrastructure in ~/infra (repo jfrodriguezva/vps-infra):
 #   - network "edge": infra-caddy reaches mrkos-web:80 (site in ~/infra/caddy/sites/djmrkos.caddy).
-#   - network "data": the API and migrator reach SQL Server as "sqlserver", with the
+#   - network "data": the API and migrator reach SQL Server as "infra-sqlserver", with the
 #     app's own login (DB_USER/DB_PASSWORD), never sa.
 # ~/infra must be up first (it creates the edge and data networks).
 #
@@ -23,7 +23,7 @@ services:
       context: ./DjMrkos/backend
       dockerfile: src/DjMrkos.Migrator/Dockerfile
     container_name: mrkos-migrator
-    command: ["Server=sqlserver,1433;Database=djmrkos;User Id=${DB_USER};Password=${DB_PASSWORD};TrustServerCertificate=True"]
+    command: ["Server=infra-sqlserver,1433;Database=djmrkos;User Id=${DB_USER};Password=${DB_PASSWORD};TrustServerCertificate=True"]
     restart: "no"
     networks: [data]
 
@@ -35,7 +35,7 @@ services:
     restart: unless-stopped
     environment:
       ASPNETCORE_ENVIRONMENT: Production
-      Database__ConnectionString: "Server=sqlserver,1433;Database=djmrkos;User Id=${DB_USER};Password=${DB_PASSWORD};TrustServerCertificate=True"
+      Database__ConnectionString: "Server=infra-sqlserver,1433;Database=djmrkos;User Id=${DB_USER};Password=${DB_PASSWORD};TrustServerCertificate=True"
       Qr__SigningKey: ${QR_SIGNING_KEY}
       Admin__ApiKey: ${ADMIN_API_KEY}
       Telegram__BotToken: ${TELEGRAM_BOT_TOKEN:-}
