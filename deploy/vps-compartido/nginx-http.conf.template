@@ -7,7 +7,7 @@ server {
     server_name __DOMAIN__;
 
     location /.well-known/acme-challenge/ {
-        root /var/www/certbot;
+        root /var/www/certbot-mrkos;
     }
 
     # Resolved per request through Docker's DNS: if the DJ MrKos stack is down, nginx

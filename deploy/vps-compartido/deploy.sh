@@ -10,8 +10,9 @@
 #      stops so you can fill DOMAIN and DB_PASSWORD.
 #   3. Builds and starts mrkos-migrator -> mrkos-api -> mrkos-web on Lawyer's network.
 #   4. Plugs the domain into lawyer-nginx: HTTP first, then the Let's Encrypt certificate
-#      through Lawyer's certbot, then HTTPS. Every nginx change is checked with `nginx -t`
-#      and rolled back if it fails, so a bad config can never take Lawyer down.
+#      from mrkos-certbot (files in ~/Mrkos/certbot, never Lawyer's volumes), then HTTPS.
+#      Every nginx change is checked with `nginx -t` and rolled back if it fails, so a bad
+#      config can never take Lawyer down.
 #
 # Everything lives inside main(), so bash parses the whole script before running it — the
 # `git pull` in step 1 may rewrite this very file mid-run.
@@ -31,7 +32,9 @@ main() {
 
     # ---------------------------------------------------------------- 1. code
     step "Código en $SRC"
-    mkdir -p "$MRKOS_DIR/nginx"
+    # Created here, before lawyer-nginx ever mounts them: bind-mounting a path that doesn't
+    # exist yet makes Docker create a root-owned directory in its place.
+    mkdir -p "$MRKOS_DIR/nginx" "$MRKOS_DIR/certbot/conf" "$MRKOS_DIR/certbot/www"
     if [ -d "$SRC/.git" ]; then
         git -C "$SRC" pull --ff-only
     else
@@ -97,37 +100,49 @@ EOF
         render "$TPL/nginx-http.conf.template" "$DOMAIN" > "$NGINX_CONF"
     fi
 
-    if ! docker exec "$NGINX" test -f /etc/nginx/conf.d/mrkos.conf; then
+    if ! docker exec "$NGINX" sh -c \
+        'test -f /etc/nginx/conf.d/mrkos.conf && test -d /etc/letsencrypt-mrkos && test -d /var/www/certbot-mrkos'; then
         cat <<EOF
 
-Falta un paso único en Lawyer: que su nginx lea $NGINX_CONF.
-Agrega esto en $LAWYER_DIR/docker-compose.override.yml (junto a lo que ya tenga):
+Falta un paso único en Lawyer: que su nginx lea (solo lectura) los archivos de ~/Mrkos.
+Agrega el bloque "nginx" en $LAWYER_DIR/docker-compose.override.yml, junto a lo que ya tenga:
 
 services:
   nginx:
     volumes:
       - $NGINX_CONF:/etc/nginx/conf.d/mrkos.conf:ro
+      - $MRKOS_DIR/certbot/conf:/etc/letsencrypt-mrkos:ro
+      - $MRKOS_DIR/certbot/www:/var/www/certbot-mrkos:ro
 
-y recrea solo nginx (unos segundos sin servicio):
+Recrea solo nginx (unos segundos sin servicio) y comprueba que siga sano:
 
-    cd $LAWYER_DIR && docker compose up -d nginx
+    cd $LAWYER_DIR && docker compose up -d nginx && docker exec $NGINX nginx -t
 
 Luego vuelve a correr este script.
 EOF
         exit 1
     fi
 
-    if ! docker exec "$NGINX" test -f "/etc/letsencrypt/live/$DOMAIN/fullchain.pem"; then
+    if ! docker exec "$NGINX" test -f "/etc/letsencrypt-mrkos/live/$DOMAIN/fullchain.pem"; then
         apply_nginx "$NGINX" "$NGINX_CONF" "$TPL/nginx-http.conf.template" "$DOMAIN"
 
-        step "Pidiendo el certificado de $DOMAIN con el certbot de Lawyer"
-        (cd "$LAWYER_DIR" && docker compose run --rm --entrypoint certbot certbot \
+        step "Pidiendo el certificado de $DOMAIN con mrkos-certbot"
+        (cd "$MRKOS_DIR" && docker compose run --rm --no-deps --entrypoint certbot mrkos-certbot \
             certonly --webroot -w /var/www/certbot -d "$DOMAIN" \
             --non-interactive --agree-tos --register-unsafely-without-email --keep-until-expiring) \
             || fail "Certbot no pudo emitir el certificado. El sitio queda en http://$DOMAIN mientras tanto."
     fi
 
     apply_nginx "$NGINX" "$NGINX_CONF" "$TPL/nginx-https.conf.template" "$DOMAIN"
+
+    # nginx only reads certificates when it starts or reloads, so a certificate renewed by
+    # certbot is not served until the next reload. A daily reload picks it up (for Lawyer's
+    # certificate too); it is harmless — a reload with a broken config keeps the old one.
+    local cron_tag="# mrkos-nginx-reload"
+    if ! crontab -l 2>/dev/null | grep -qF "$cron_tag"; then
+        step "Agregando recarga diaria de nginx al crontab (para certificados renovados)"
+        { crontab -l 2>/dev/null || true; echo "17 4 * * * docker exec $NGINX nginx -s reload >/dev/null 2>&1 $cron_tag"; } | crontab -
+    fi
 
     # ---------------------------------------------------------------- verify
     step "Verificando"
