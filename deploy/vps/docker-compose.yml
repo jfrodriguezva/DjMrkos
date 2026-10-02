@@ -1,5 +1,5 @@
 # DJ MrKos on the shared VPS: ONLY the app. SQL Server and the HTTPS proxy (Caddy, owner
-# of 80/443) are shared infrastructure in ~/infra (repo jfrodriguezva/vps-infra):
+# of 80/443) are shared infrastructure in ~/infra (a hand-made folder on the VPS, not a repo):
 #   - network "edge": infra-caddy reaches mrkos-web:80 (site in ~/infra/caddy/sites/djmrkos.caddy).
 #   - network "data": the API and migrator reach SQL Server as "infra-sqlserver", with the
 #     app's own login (DB_USER/DB_PASSWORD), never sa.

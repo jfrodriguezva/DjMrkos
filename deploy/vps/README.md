@@ -1,6 +1,6 @@
 # Despliegue en el VPS compartido
 
-DJ MrKos es una app más del VPS: su carpeta, su compose y su `.env`. SQL Server y el HTTPS son infraestructura compartida en `~/infra` ([jfrodriguezva/vps-infra](https://github.com/jfrodriguezva/vps-infra)).
+DJ MrKos es una app más del VPS: su carpeta, su compose y su `.env`. SQL Server y el HTTPS son infraestructura compartida en `~/infra`, una carpeta creada a mano en el servidor (no es un repo): `infra-sqlserver` + `infra-caddy`, con su `.env`, `caddy/sites/`, `scripts/` y `backups/`.
 
 ```
 /home/ubuntu/
@@ -23,7 +23,7 @@ DJ MrKos es una app más del VPS: su carpeta, su compose y su `.env`. SQL Server
 ## Primera vez
 
 1. `~/infra` levantado, y el registro A de `djmrkos.com` (y `www`) → IP del VPS en Cloudflare, **DNS only**.
-2. BD y login (si no existen): `bash ~/infra/scripts/new-app-db.sh djmrkos mrkos`.
+2. BD `DJMrkos` y login `mrkos` en `infra-sqlserver` (si no existen). Para crear o cambiar la contraseña del login y guardarla en el `.env`: `bash ~/infra/scripts/app-login.sh mrkos DJMrkos ~/Mrkos/.env`.
 3. Deploy:
    ```bash
    git clone https://github.com/jfrodriguezva/DjMrkos.git ~/Mrkos/DjMrkos   # si no está
