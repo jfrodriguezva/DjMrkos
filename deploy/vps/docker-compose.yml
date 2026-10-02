@@ -22,6 +22,7 @@ services:
     build:
       context: ./DjMrkos/backend
       dockerfile: src/DjMrkos.Migrator/Dockerfile
+    image: mrkos-migrator
     container_name: mrkos-migrator
     command: ["Server=infra-sqlserver,1433;Database=djmrkos;User Id=${DB_USER};Password=${DB_PASSWORD};TrustServerCertificate=True"]
     restart: "no"
@@ -31,6 +32,7 @@ services:
     build:
       context: ./DjMrkos/backend
       dockerfile: src/DjMrkos.Api/Dockerfile
+    image: mrkos-api
     container_name: mrkos-api
     restart: unless-stopped
     environment:
@@ -53,6 +55,7 @@ services:
     build:
       context: ./DjMrkos/frontend
       dockerfile: Dockerfile
+    image: mrkos-web
     container_name: mrkos-web
     restart: unless-stopped
     volumes:
