@@ -47,7 +47,7 @@ services:
       Gallery__StoragePath: /app/data/gallery
     volumes:
       # Gallery photos. A named volume (mrkos_gallery) so they survive rebuilds; ~/infra's
-      # backup.sh copies it daily once it's listed in its FILE_VOLUMES.
+      # backup.sh finds it by its Compose project label and copies it daily.
       - gallery:/app/data/gallery
     depends_on:
       mrkos-migrator:

@@ -20,7 +20,7 @@ DJ MrKos es una app más del VPS: su carpeta, su compose y su `.env`. SQL Server
 
 `infra-caddy` publica `https://djmrkos.com` → `mrkos-web:80` (`~/infra/caddy/sites/djmrkos.caddy`).
 
-Las fotos de la galería viven en el volumen **`mrkos_gallery`** (montado en `/app/data/gallery` de `mrkos-api`), no en la imagen: sobreviven a cada `deploy.sh`. Para que entren al respaldo diario, `mrkos_gallery` debe estar en `FILE_VOLUMES` de `~/infra/scripts/backup.sh`.
+Las fotos de la galería viven en el volumen **`mrkos_gallery`** (montado en `/app/data/gallery` de `mrkos-api`), no en la imagen: sobreviven a cada `deploy.sh`. Entran solas al respaldo diario: `~/infra/scripts/backup.sh` detecta los volúmenes de cada app por la etiqueta de proyecto que pone Docker Compose (excepto los de `infra` y los `*_logs`).
 
 ## Primera vez
 
