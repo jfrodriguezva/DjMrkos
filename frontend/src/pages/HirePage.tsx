@@ -177,6 +177,10 @@ export function HirePage() {
                     Entiendo que esta es una solicitud de contratación preliminar — DJ MrKos confirmará disponibilidad final, condiciones de pago
                     y firmará el contrato formal por separado.
                   </label>
+                  {/* New tab so the half-filled form and cart above aren't lost. */}
+                  <Link to="/clausulas" target="_blank" rel="noopener" className={styles.termsLink}>
+                    Leer las cláusulas del contrato
+                  </Link>
 
                   <Button type="submit" disabled={submit.isPending || !acceptedTerms}>
                     {submit.isPending ? 'Enviando…' : 'Confirmar contratación'}

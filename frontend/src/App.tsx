@@ -4,6 +4,7 @@ import { AboutPage } from './pages/AboutPage'
 import { AdminDashboardPage } from './pages/admin/AdminDashboardPage'
 import { AdminLoginPage } from './pages/admin/AdminLoginPage'
 import { ContactPage } from './pages/ContactPage'
+import { ContractTermsPage } from './pages/ContractTermsPage'
 import { HirePage } from './pages/HirePage'
 import { HomePage } from './pages/HomePage'
 import { NotFoundPage } from './pages/NotFoundPage'
@@ -29,6 +30,7 @@ export default function App() {
         <Route path="/cotizador" element={<QuoteBuilderPage />} />
         <Route path="/agendar" element={<SchedulePage />} />
         <Route path="/contratar" element={<HirePage />} />
+        <Route path="/clausulas" element={<ContractTermsPage />} />
         <Route path="/quienes-somos" element={<AboutPage />} />
         <Route path="/testimonios" element={<TestimonialsPage />} />
         <Route path="/contacto" element={<ContactPage />} />

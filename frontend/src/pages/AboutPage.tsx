@@ -16,6 +16,7 @@ export function AboutPage() {
         <div className="container">
           <span className="eyebrow">Quiénes somos</span>
           <h1>DJ MrKos</h1>
+          <p className={styles.role}>DJ y productor musical</p>
           <p className={styles.motto}>"El pulso de tu evento."</p>
         </div>
       </div>

@@ -30,6 +30,7 @@ export function Footer() {
               <Link to="/agendar">Agendar</Link>
               <Link to="/cotizador">Cotizar</Link>
               <Link to="/contratar">Contratar</Link>
+              <Link to="/clausulas">Cláusulas del contrato</Link>
             </div>
           </div>
 
