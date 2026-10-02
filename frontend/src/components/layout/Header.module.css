@@ -137,6 +137,9 @@
   padding: var(--space-4);
   display: grid;
   gap: var(--space-1);
+  /* The header is sticky, so the open menu must scroll on its own on short screens. */
+  max-height: calc(100dvh - var(--header-height));
+  overflow-y: auto;
 }
 
 @media (min-width: 900px) {

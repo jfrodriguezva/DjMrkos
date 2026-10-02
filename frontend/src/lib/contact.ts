@@ -1,9 +1,10 @@
-// Placeholder — reemplaza con los datos reales del negocio antes de publicar el sitio.
+// Datos de contacto del negocio. Plain links only (tel:, mailto:, wa.me): nothing from
+// Meta is embedded in the site — wa.me just opens the visitor's own WhatsApp app.
 export const CONTACT = {
-  whatsappNumber: '5215500000000', // formato E.164 sin "+", el que espera wa.me
-  phoneDisplay: '+52 55 0000 0000',
-  phoneHref: 'tel:+525500000000',
-  email: 'hola@djmrkos.com',
+  whatsappNumber: '525524976505', // 52 + 10 dígitos, sin "+", el formato que espera wa.me
+  phoneDisplay: '55 2497 6505',
+  phoneHref: 'tel:+525524976505',
+  email: 'djmrkos@gmail.com',
 }
 
 export function whatsappHref(message?: string): string {
