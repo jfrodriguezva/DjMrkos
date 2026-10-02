@@ -44,6 +44,11 @@ services:
       Telegram__ChatId: ${TELEGRAM_CHAT_ID:-}
       Frontend__PublicBaseUrl: https://${DOMAIN}
       Frontend__AllowedOrigins__0: https://${DOMAIN}
+      Gallery__StoragePath: /app/data/gallery
+    volumes:
+      # Gallery photos. A named volume (mrkos_gallery) so they survive rebuilds; ~/infra's
+      # backup.sh copies it daily once it's listed in its FILE_VOLUMES.
+      - gallery:/app/data/gallery
     depends_on:
       mrkos-migrator:
         condition: service_completed_successfully
@@ -73,3 +78,6 @@ networks:
   data:
     external: true
     name: data
+
+volumes:
+  gallery:

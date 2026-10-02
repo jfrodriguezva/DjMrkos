@@ -19,6 +19,7 @@ export function Footer() {
             <div className={styles.links}>
               <Link to="/servicios">Servicios</Link>
               <Link to="/quienes-somos">Quiénes somos</Link>
+              <Link to="/galeria">Galería</Link>
               <Link to="/testimonios">Testimonios</Link>
               <Link to="/contacto">Contacto</Link>
             </div>

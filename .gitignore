@@ -15,3 +15,6 @@ frontend/dist/
 # OS / editor
 .DS_Store
 Thumbs.db
+
+# Gallery photos uploaded in development (production keeps them in a Docker volume)
+backend/**/App_Data/

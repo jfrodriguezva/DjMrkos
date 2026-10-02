@@ -96,6 +96,8 @@ app.MapSongRequestsEndpoints();
 app.MapTestimonialsEndpoints();
 app.MapLeadsEndpoints();
 app.MapPromotionsEndpoints();
+app.MapGalleryEndpoints();
+app.MapBlockedDatesEndpoints();
 
 app.MapHub<SongRequestHub>("/hubs/song-requests");
 

@@ -39,7 +39,33 @@ Una promoción activa se refleja automáticamente en `GET /api/menu`: cada categ
 | GET | `/api/events/qr/{token}` | Público — lo llama la página QR al abrirse. Devuelve `{ id, clientName, eventDateUtc, isRequestWindowOpen }`. `404` si el token no existe, la ventana cerrada se refleja en `isRequestWindowOpen: false` (no en el código de estado). |
 | GET | `/api/admin/events` | Próximos eventos (no cancelados), ordenados por fecha. |
 | POST | `/api/admin/events` | Crea un evento y emite su token de QR. Responde `{ event, qrCodeDataUrl }` — el PNG del QR ya listo para mostrar/imprimir. |
-| GET | `/api/availability` | Público. Devuelve `string[]` de fechas (`YYYY-MM-DD`) con al menos un evento no cancelado — nunca nombres de cliente. Alimenta el calendario de `/agendar`. |
+| GET | `/api/availability` | Público. Devuelve `string[]` de fechas (`YYYY-MM-DD`) con al menos un evento no cancelado **o bloqueadas a mano** — nunca nombres de cliente ni el motivo del bloqueo. Alimenta el calendario de `/agendar` y el aviso de `/contratar`. |
+
+## Calendario (fechas bloqueadas)
+
+| Método | Ruta | Descripción |
+|---|---|---|
+| GET | `/api/admin/blocked-dates` | Fechas bloqueadas de ayer en adelante, con su motivo. |
+| POST | `/api/admin/blocked-dates` | Body: `{ from, to?, reason? }`. Bloquea un día o un rango (máximo 90 días); los días ya bloqueados se saltan. Responde solo los días nuevos. |
+| DELETE | `/api/admin/blocked-dates/{id}` | Desbloquea un día. |
+
+## Galería
+
+| Método | Ruta | Descripción |
+|---|---|---|
+| GET | `/api/gallery/albums` | Público. Álbumes publicados que tienen al menos una foto, del evento más reciente al más antiguo. |
+| GET | `/api/gallery/albums/{slug}` | Público. `{ album, images }`. `404` si no existe **o está en borrador**. |
+| GET | `/api/gallery/images/{id}/{large\|thumb}` | Público. El JPEG, con caché de un año (`immutable`): el contenido de un id nunca cambia. |
+| GET | `/api/admin/gallery/albums` | Todos los álbumes, borradores incluidos. |
+| GET | `/api/admin/gallery/albums/{id}` | Un álbum con sus fotos, aunque sea borrador. |
+| POST | `/api/admin/gallery/albums` | Body: `{ title, eventDate?, description? }`. Nace como borrador; el `slug` (URL pública) sale del título y no cambia aunque se edite el título. |
+| PUT | `/api/admin/gallery/albums/{id}` | Body: `{ title, eventDate?, description?, isPublished }`. |
+| PUT | `/api/admin/gallery/albums/{id}/cover` | Body: `{ imageId }` (una foto de ese álbum) o `{ imageId: null }` para volver a "la primera foto". |
+| DELETE | `/api/admin/gallery/albums/{id}` | Borra el álbum, sus fotos y sus archivos. |
+| POST | `/api/admin/gallery/albums/{id}/images` | `multipart/form-data`: `image` y `thumbnail` (JPEG, ya redimensionados por el navegador del admin — `frontend/src/lib/gallery.ts`), `width`, `height`, `caption?`. Una foto por petición. Se valida que los bytes sean JPEG de verdad, no el `Content-Type` declarado. |
+| DELETE | `/api/admin/gallery/images/{id}` | Borra la foto (y la quita como portada si lo era). |
+
+Los archivos viven fuera de la base, en `Gallery:StoragePath` (`App_Data/gallery` en desarrollo; el volumen `mrkos_gallery` montado en `/app/data/gallery` en el VPS).
 
 ## Solicitudes de canciones
 

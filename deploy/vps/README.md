@@ -20,6 +20,8 @@ DJ MrKos es una app más del VPS: su carpeta, su compose y su `.env`. SQL Server
 
 `infra-caddy` publica `https://djmrkos.com` → `mrkos-web:80` (`~/infra/caddy/sites/djmrkos.caddy`).
 
+Las fotos de la galería viven en el volumen **`mrkos_gallery`** (montado en `/app/data/gallery` de `mrkos-api`), no en la imagen: sobreviven a cada `deploy.sh`. Para que entren al respaldo diario, `mrkos_gallery` debe estar en `FILE_VOLUMES` de `~/infra/scripts/backup.sh`.
+
 ## Primera vez
 
 1. `~/infra` levantado, y el registro A de `djmrkos.com` (y `www`) → IP del VPS en Cloudflare, **DNS only**.

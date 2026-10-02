@@ -52,6 +52,9 @@ export function Header() {
           <NavLink to="/quienes-somos" className={link}>
             Quiénes somos
           </NavLink>
+          <NavLink to="/galeria" className={link}>
+            Galería
+          </NavLink>
           <NavLink to="/agendar" className={link}>
             Agendar
           </NavLink>
@@ -88,6 +91,9 @@ export function Header() {
           </NavLink>
           <NavLink to="/quienes-somos" className={styles.mobileLink} onClick={() => setMobileOpen(false)}>
             Quiénes somos
+          </NavLink>
+          <NavLink to="/galeria" className={styles.mobileLink} onClick={() => setMobileOpen(false)}>
+            Galería
           </NavLink>
           <NavLink to="/agendar" className={styles.mobileLink} onClick={() => setMobileOpen(false)}>
             Agendar

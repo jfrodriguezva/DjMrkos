@@ -38,7 +38,9 @@ interface RequestOptions {
 
 async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const headers: Record<string, string> = {}
-  if (options.body !== undefined) headers['Content-Type'] = 'application/json'
+  const isForm = options.body instanceof FormData
+  // FormData sets its own multipart Content-Type (with the boundary); setting it here would break it.
+  if (options.body !== undefined && !isForm) headers['Content-Type'] = 'application/json'
 
   if (options.admin) {
     const key = getAdminApiKey()
@@ -48,7 +50,7 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
   const response = await fetch(`/api${path}`, {
     method: options.method ?? 'GET',
     headers,
-    body: options.body !== undefined ? JSON.stringify(options.body) : undefined,
+    body: options.body === undefined ? undefined : isForm ? (options.body as FormData) : JSON.stringify(options.body),
   })
 
   if (response.status === 204) return undefined as T
@@ -69,4 +71,5 @@ export const api = {
   put: <T>(path: string, body?: unknown, admin = false) => request<T>(path, { method: 'PUT', body, admin }),
   patch: <T>(path: string, body?: unknown, admin = false) => request<T>(path, { method: 'PATCH', body, admin }),
   del: <T>(path: string, admin = false) => request<T>(path, { method: 'DELETE', admin }),
+  upload: <T>(path: string, form: FormData) => request<T>(path, { method: 'POST', body: form, admin: true }),
 }

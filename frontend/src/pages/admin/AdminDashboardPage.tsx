@@ -1,19 +1,23 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getAdminApiKey, setAdminApiKey } from '../../lib/apiClient'
+import { CalendarPanel } from './panels/CalendarPanel'
 import { CatalogPanel } from './panels/CatalogPanel'
 import { EventsPanel } from './panels/EventsPanel'
+import { GalleryPanel } from './panels/GalleryPanel'
 import { LeadsPanel } from './panels/LeadsPanel'
 import { LiveQueuePanel } from './panels/LiveQueuePanel'
 import { PromotionsPanel } from './panels/PromotionsPanel'
 import { TestimonialsPanel } from './panels/TestimonialsPanel'
 import styles from './AdminDashboardPage.module.css'
 
-type Tab = 'queue' | 'events' | 'catalog' | 'promotions' | 'testimonials' | 'leads'
+type Tab = 'queue' | 'events' | 'calendar' | 'gallery' | 'catalog' | 'promotions' | 'testimonials' | 'leads'
 
 const TABS: { id: Tab; label: string }[] = [
   { id: 'queue', label: 'Cola en vivo' },
   { id: 'events', label: 'Eventos' },
+  { id: 'calendar', label: 'Calendario' },
+  { id: 'gallery', label: 'Galería' },
   { id: 'catalog', label: 'Catálogo' },
   { id: 'promotions', label: 'Promociones' },
   { id: 'testimonials', label: 'Testimonios' },
@@ -61,6 +65,8 @@ export function AdminDashboardPage() {
         <div className={styles.content}>
           {tab === 'queue' && <LiveQueuePanel />}
           {tab === 'events' && <EventsPanel />}
+          {tab === 'calendar' && <CalendarPanel />}
+          {tab === 'gallery' && <GalleryPanel />}
           {tab === 'catalog' && <CatalogPanel />}
           {tab === 'promotions' && <PromotionsPanel />}
           {tab === 'testimonials' && <TestimonialsPanel />}

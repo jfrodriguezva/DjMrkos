@@ -114,6 +114,38 @@ export interface PromotionAdmin {
   createdAtUtc: string
 }
 
+export interface GalleryAlbum {
+  id: string
+  title: string
+  slug: string
+  eventDate: string | null // "YYYY-MM-DD"
+  description: string | null
+  coverImageId: string | null // chosen cover, or the first photo
+  isPublished: boolean
+  imageCount: number
+  createdAtUtc: string
+}
+
+export interface GalleryImage {
+  id: string
+  albumId: string
+  caption: string | null
+  width: number
+  height: number
+  createdAtUtc: string
+}
+
+export interface GalleryAlbumDetail {
+  album: GalleryAlbum
+  images: GalleryImage[]
+}
+
+export interface BlockedDate {
+  id: string
+  date: string // "YYYY-MM-DD"
+  reason: string | null
+}
+
 export interface ApiProblem {
   title: string
   status: number

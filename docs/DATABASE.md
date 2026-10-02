@@ -76,6 +76,27 @@ erDiagram
         numeric discount_percentage
         bit is_active
     }
+    gallery_albums ||--o{ gallery_images : "ON DELETE CASCADE"
+    gallery_albums {
+        uniqueidentifier id PK
+        nvarchar title
+        nvarchar slug UK
+        date event_date "nullable"
+        uniqueidentifier cover_image_id "nullable, sin FK"
+        bit is_published
+    }
+    gallery_images {
+        uniqueidentifier id PK
+        uniqueidentifier album_id FK
+        nvarchar caption
+        int width
+        int height
+    }
+    blocked_dates {
+        uniqueidentifier id PK
+        date blocked_date UK
+        nvarchar reason "solo admin"
+    }
 ```
 
 Columnas en `snake_case` — Dapper las mapea a las propiedades `PascalCase` de C# gracias a una sola línea en el arranque: `Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true` (`Infrastructure/DependencyInjection.cs`).
@@ -89,6 +110,8 @@ Columnas en `snake_case` — Dapper las mapea a las propiedades `PascalCase` de 
 - **`categories.price`** es nullable a propósito: `NULL` significa "va incluido al contratar el módulo, no es un artículo independiente" (p. ej. los géneros musicales del DJ), mientras que un valor es el precio "desde" que el cotizador del frontend usa para armar el presupuesto — ver [FRONTEND.md](FRONTEND.md#cotizador-tipo-carrito).
 - **Índices** pensados para las dos consultas calientes: el menú público (`ix_modules_active_order`, `ix_categories_module_active_order`) y la cola en vivo de un evento (`ix_song_requests_event`).
 - **`promotions`** solo puede apuntar a un módulo completo o a una categoría, nunca a ambos ni a ninguno — reforzado tanto por `Promotion.Create` en el dominio como por el `CHECK ck_promotions_exactly_one_target` en la base, así que un dato corrupto no puede colarse ni siquiera por un `INSERT` manual.
+- **`gallery_images` guarda solo metadatos**; los JPEG (versión grande y miniatura) están en disco, nombrados por el `id`. **`gallery_albums.cover_image_id` no tiene FK** a propósito: las fotos ya cascadean desde el álbum, y una segunda relación de vuelta sería un ciclo que SQL Server rechaza. `GalleryRepository.DeleteImageAsync` limpia la portada en la misma transacción.
+- **`blocked_dates.blocked_date` es único**: bloquear un rango que se encima con días ya bloqueados simplemente se los salta.
 
 ## Nota de compatibilidad con Dapper
 

@@ -49,6 +49,9 @@ services:
       Telegram__ChatId: ${TELEGRAM_CHAT_ID:-}
       Frontend__PublicBaseUrl: https://${DOMAIN}
       Frontend__AllowedOrigins__0: https://${DOMAIN}
+      Gallery__StoragePath: /app/data/gallery
+    volumes:
+      - djmrkos-gallery:/app/data/gallery
     depends_on:
       sqlserver:
         condition: service_healthy
@@ -73,5 +76,6 @@ services:
 
 volumes:
   djmrkos-sqlserver-data:
+  djmrkos-gallery:
   caddy-data:
   caddy-config:

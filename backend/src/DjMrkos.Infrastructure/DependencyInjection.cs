@@ -5,6 +5,7 @@ using DjMrkos.Infrastructure.Persistence;
 using DjMrkos.Infrastructure.Qr;
 using DjMrkos.Infrastructure.Realtime;
 using DjMrkos.Infrastructure.Repositories;
+using DjMrkos.Infrastructure.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -25,6 +26,7 @@ public static class DependencyInjection
         services.Configure<DatabaseOptions>(configuration.GetSection(DatabaseOptions.SectionName));
         services.Configure<QrOptions>(configuration.GetSection(QrOptions.SectionName));
         services.Configure<TelegramOptions>(configuration.GetSection(TelegramOptions.SectionName));
+        services.Configure<GalleryOptions>(configuration.GetSection(GalleryOptions.SectionName));
 
         services.AddSingleton<IDbConnectionFactory, SqlConnectionFactory>();
         services.AddSingleton<IResilientDbExecutor, ResilientDbExecutor>();
@@ -36,6 +38,9 @@ public static class DependencyInjection
         services.AddScoped<ITestimonialRepository, TestimonialRepository>();
         services.AddScoped<ILeadRepository, LeadRepository>();
         services.AddScoped<IPromotionRepository, PromotionRepository>();
+        services.AddScoped<IGalleryRepository, GalleryRepository>();
+        services.AddScoped<IBlockedDateRepository, BlockedDateRepository>();
+        services.AddSingleton<IGalleryImageStorage, FileSystemGalleryImageStorage>();
 
         services.AddSingleton<IDateTimeProvider, SystemDateTimeProvider>();
         services.AddSingleton<IQrTokenService, QrTokenService>();
