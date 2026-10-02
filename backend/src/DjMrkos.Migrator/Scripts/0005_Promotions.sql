@@ -1,9 +1,13 @@
 -- Promociones: descuento por porcentaje configurable por el admin, aplicado a un módulo
 -- completo (todas sus categorías con precio) o a una sola categoría — nunca a ambos.
+--
+-- module_id is NO ACTION on purpose: SQL Server rejects two cascade paths into one table
+-- (modules -> promotions directly AND modules -> categories -> promotions), error 1785.
+-- ModuleRepository.DeleteAsync deletes a module's promotions itself, in the same transaction.
 
 CREATE TABLE promotions (
     id                    UNIQUEIDENTIFIER PRIMARY KEY,
-    module_id             UNIQUEIDENTIFIER NULL REFERENCES modules (id) ON DELETE CASCADE,
+    module_id             UNIQUEIDENTIFIER NULL REFERENCES modules (id) ON DELETE NO ACTION,
     category_id           UNIQUEIDENTIFIER NULL REFERENCES categories (id) ON DELETE CASCADE,
     label                 NVARCHAR(200) NOT NULL,
     discount_percentage   NUMERIC(5, 2) NOT NULL,

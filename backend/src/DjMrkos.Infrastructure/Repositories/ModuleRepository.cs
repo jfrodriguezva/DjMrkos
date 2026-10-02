@@ -53,7 +53,15 @@ public sealed class ModuleRepository(IResilientDbExecutor db) : IModuleRepositor
     public Task DeleteAsync(Guid id, CancellationToken ct) =>
         db.ExecuteAsync((connection, token) =>
         {
-            const string sql = "DELETE FROM modules WHERE id = @Id";
+            // promotions.module_id can't cascade (see 0005_Promotions.sql), so module-wide
+            // promotions go first; category promotions still cascade via categories.
+            const string sql = """
+                SET XACT_ABORT ON;
+                BEGIN TRANSACTION;
+                DELETE FROM promotions WHERE module_id = @Id;
+                DELETE FROM modules WHERE id = @Id;
+                COMMIT TRANSACTION;
+                """;
             return connection.ExecuteAsync(new CommandDefinition(sql, new { Id = id }, cancellationToken: token));
         }, ct);
 

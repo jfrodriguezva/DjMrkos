@@ -3,6 +3,9 @@
 -- arrastran al presupuesto igual que una torre de luces.
 
 ALTER TABLE categories ADD price NUMERIC(10, 2) NULL;
+-- Separate batch: SQL Server compiles a whole batch before running it, so the UPDATEs
+-- below would fail with "Invalid column name 'price'" if they shared the ALTER's batch.
+GO
 
 -- "Desde" precio en MXN. NULL = va incluido al contratar el módulo (p. ej. la música del DJ),
 -- no es un artículo independiente que se pueda agregar al carrito.
